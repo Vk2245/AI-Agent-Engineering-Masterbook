@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Part 1 - Programming Foundations | AI Agent Engineering Masterbook</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:wght@700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,700&display=swap" rel="stylesheet">
+  <script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --ink: #191816;
+      --ink-soft: #3c3934;
+      --muted: #6d675f;
+      --faint: #9b958c;
+      --paper: #fffdf8;
+      --warm: #f7f1e6;
+      --cool: #eef5f7;
+      --line: #e2d8c9;
+      --line-strong: #c9bca9;
+      --gold: #b97822;
+      --rust: #b64b35;
+      --teal: #1c7275;
+      --green: #2f7048;
+      --indigo: #4057a8;
+      --purple: #7149a8;
+      --blue: #2368a2;
+      --code-bg: #171b22;
+      --code-text: #e9edf5;
+      --shadow: 0 12px 34px rgba(40, 32, 20, 0.16), 0 2px 8px rgba(40, 32, 20, 0.08);
+      --shadow-soft: 0 5px 18px rgba(40, 32, 20, 0.08);
+      --a4-width: 210mm;
+      --a4-min-height: 297mm;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.55) 0 1px, transparent 1px 28px),
+        linear-gradient(0deg, rgba(255,255,255,0.55) 0 1px, transparent 1px 28px),
+        #e6ded1;
+      font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.72;
+      font-size: 15px;
+    }
+
+    a { color: inherit; }
+    strong { color: var(--ink); }
+
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 20px;
+      color: #f9f4ea;
+      background: rgba(25, 24, 22, 0.96);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+      backdrop-filter: blur(14px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      font-family: "Playfair Display", serif;
+      font-weight: 900;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+
+    .brand-mark {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--ink);
+      background: var(--gold);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .topbar small {
+      color: rgba(249,244,234,0.7);
+      font-size: 11px;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .btn {
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.08);
+      color: #fff8ec;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,0.14);
+      border-color: rgba(255,255,255,0.32);
+    }
+
+    .btn.primary {
+      background: var(--gold);
+      color: #22170a;
+      border-color: var(--gold);
+      font-weight: 700;
+    }
+
+    .progress-line {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      z-index: 1001;
+      background: rgba(255,255,255,0.22);
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), var(--teal), var(--indigo));
+      transition: width 0.12s linear;
+    }
+
+    .toc-drawer {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      bottom: 0;
+      width: min(340px, 90vw);
+      z-index: 999;
+      padding: 22px;
+      overflow-y: auto;
+      color: #f9f4ea;
+      background: #191816;
+      transform: translateX(-102%);
+      transition: transform 0.25s ease;
+      box-shadow: 10px 0 24px rgba(0,0,0,0.25);
+    }
+
+    .toc-drawer.open { transform: translateX(0); }
+    .toc-drawer h2 {
+      margin: 0 0 14px;
+      color: var(--gold);
+      font-family: "Playfair Display", serif;
+      font-size: 24px;
+    }
+
+    .toc-drawer a {
+      display: block;
+      padding: 7px 8px;
+      border-radius: 6px;
+      color: rgba(249,244,234,0.78);
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .toc-drawer a:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .toc-drawer .toc-chapter {
+      margin-top: 10px;
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    .book {
+      width: min(var(--a4-width), calc(100vw - 28px));
+      margin: 0 auto;
+      padding: 88px 0 56px;
+    }
+
+    .page {
+      position: relative;
+      min-height: var(--a4-min-height);
+      margin: 0 auto 28px;
+      padding: 0.3in;
+      overflow: hidden;
+      background: var(--paper);
+      border: 1px solid rgba(85, 69, 45, 0.12);
+      border-radius: 3px;
+      box-shadow: var(--shadow);
+    }
+
+    .page.compact { min-height: auto; }
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border: 10px solid transparent;
+      outline: 1px solid rgba(185,120,34,0.12);
+      outline-offset: -18px;
+    }
+
+    .hero {
+      display: grid;
+      align-content: center;
+      color: #fffaf0;
+      background:
+        radial-gradient(circle at 86% 15%, rgba(185,120,34,0.28), transparent 24%),
+        radial-gradient(circle at 12% 88%, rgba(28,114,117,0.22), transparent 27%),
+        linear-gradient(135deg, #181714 0%, #2a241c 52%, #181714 100%);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 34px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .eyebrow {
+      margin-bottom: 14px;
+      color: var(--gold);
+      font-weight: 800;
+      letter-spacing: 2.4px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    h1, h2, h3 {
+      line-height: 1.14;
+      color: var(--ink);
+    }
+
+    .hero h1 {
+      margin: 0 0 18px;
+      color: #fff8ec;
+      font-family: "Playfair Display", serif;
+      font-size: clamp(42px, 7vw, 68px);
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .hero p {
+      max-width: 560px;
+      margin: 0 0 24px;
+      color: rgba(255,248,236,0.78);
+      font-size: 17px;
+    }
+
+    .hero-card {
+      border: 1px solid rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 22px;
+      box-shadow: 0 12px 34px rgba(0,0,0,0.18);
+    }
+
+    .hero-card h2 {
+      margin: 0 0 12px;
+      color: #fff8ec;
+      font-family: "Playfair Display", serif;
+      font-size: 25px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(255,255,255,0.09);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--gold);
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 6px;
+      color: rgba(255,248,236,0.7);
+      font-size: 11px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .chapter-head {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 18px;
+      align-items: start;
+      padding-bottom: 18px;
+      margin-bottom: 22px;
+      border-bottom: 2px solid var(--line);
+    }
+
+    .chapter-num {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff8ec;
+      background: var(--ink);
+      font-family: "Playfair Display", serif;
+      font-size: 28px;
+      font-weight: 900;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .chapter-head h2 {
+      margin: 0 0 8px;
+      font-family: "Playfair Display", serif;
+      font-size: 36px;
+      font-weight: 900;
+    }
+
+    .chapter-head p {
+      margin: 0;
+      color: var(--muted);
+      font-family: "Source Serif 4", serif;
+      font-size: 16px;
+    }
+
+    .banner {
+      position: relative;
+      z-index: 1;
+      margin: 20px 0;
+      padding: 18px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: linear-gradient(135deg, #fffaf2, #f2f7f7);
+    }
+
+    .banner h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: var(--teal);
+    }
+
+    .banner p { margin: 0; color: var(--ink-soft); }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .toc-card {
+      display: block;
+      min-height: 112px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fffaf2;
+      text-decoration: none;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .toc-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .toc-card strong {
+      display: block;
+      margin-bottom: 7px;
+      font-family: "Playfair Display", serif;
+      font-size: 19px;
+    }
+
+    .toc-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chapter-tools {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 20px 0;
+    }
+
+    .tool-card {
+      padding: 18px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--warm);
+    }
+
+    .tool-card h3 {
+      margin: 0 0 8px;
+      color: var(--rust);
+      font-size: 16px;
+    }
+
+    .tool-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .mermaid-wrap, .diagram-panel {
+      position: relative;
+      z-index: 1;
+      margin: 22px 0;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fffaf2;
+      overflow-x: auto;
+    }
+
+    .diagram-title {
+      margin: 0 0 10px;
+      color: var(--indigo);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .topic-card {
+      position: relative;
+      z-index: 1;
+      margin: 26px 0;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fffefa;
+      box-shadow: var(--shadow-soft);
+      page-break-inside: avoid;
+    }
+
+    .topic-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(90deg, var(--gold), var(--teal), var(--purple));
+    }
+
+    .topic-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .topic-title h3 {
+      margin: 0;
+      font-family: "Playfair Display", serif;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .topic-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      color: #fff8ec;
+      background: var(--ink);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .lens-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .lens {
+      min-height: 104px;
+      padding: 14px;
+      border: 1px solid #eadfce;
+      border-radius: 9px;
+      background: #fffaf2;
+    }
+
+    .lens.full { grid-column: 1 / -1; }
+    .lens h4 {
+      margin: 0 0 6px;
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .lens p, .lens li {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 13.7px;
+    }
+
+    .lens ul, .lens ol {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .mini-flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .flow-box {
+      min-height: 52px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 10px;
+      border-radius: 9px;
+      color: var(--ink);
+      background: #eef7f7;
+      border: 1px solid #cfe1e2;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .flow-arrow {
+      color: var(--gold);
+      font-family: "JetBrains Mono", monospace;
+      font-weight: 700;
+    }
+
+    .code-block {
+      margin: 16px 0;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--code-bg);
+      box-shadow: var(--shadow-soft);
+      page-break-inside: avoid;
+    }
+
+    .code-head {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 14px;
+      color: rgba(255,255,255,0.62);
+      border-bottom: 1px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.05);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ff5f56;
+    }
+    .dot:nth-child(2) { background: #ffbd2e; }
+    .dot:nth-child(3) { background: #27c93f; }
+    .code-head span:last-child {
+      margin-left: auto;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      overflow-x: auto;
+      color: var(--code-text);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12.8px;
+      line-height: 1.75;
+      tab-size: 2;
+    }
+
+    code .kw { color: #ffb36b; }
+    code .str { color: #99d67b; }
+    code .num { color: #8fc7ff; }
+    code .cm { color: #7e8798; font-style: italic; }
+    code .fn { color: #d9a3ff; }
+
+    .output {
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 9px;
+      border: 1px dashed var(--line-strong);
+      background: #fbf5ea;
+      color: var(--ink-soft);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12.5px;
+      white-space: pre-wrap;
+    }
+
+    .line-notes {
+      margin: 12px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0 0;
+      font-size: 12.8px;
+    }
+
+    .mini-table th {
+      color: #fff8ec;
+      background: var(--ink);
+      text-align: left;
+      padding: 9px;
+      font-size: 11px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    .mini-table td {
+      padding: 9px;
+      border: 1px solid var(--line);
+      color: var(--ink-soft);
+      vertical-align: top;
+      background: #fffefa;
+    }
+
+    .callout {
+      margin: 18px 0;
+      padding: 16px 18px;
+      border-radius: 10px;
+      border-left: 5px solid var(--gold);
+      background: #fff7e8;
+    }
+
+    .callout h3 {
+      margin: 0 0 6px;
+      color: var(--gold);
+      font-size: 15px;
+    }
+
+    .callout p { margin: 0; color: var(--ink-soft); }
+    .callout.note { border-color: var(--teal); background: #eef8f7; }
+    .callout.note h3 { color: var(--teal); }
+    .callout.warn { border-color: var(--rust); background: #fff0eb; }
+    .callout.warn h3 { color: var(--rust); }
+    .callout.remember { border-color: var(--indigo); background: #f1f3ff; }
+    .callout.remember h3 { color: var(--indigo); }
+
+    .lab-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 18px;
+      margin: 20px 0;
+    }
+
+    .level-label {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff8ec;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 11px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .exercise-panel {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 12px;
+      color: #fff8ec;
+      background: linear-gradient(135deg, #191816, #2c261e);
+      page-break-inside: avoid;
+    }
+
+    .exercise-panel h3 {
+      margin: 0 0 12px;
+      color: var(--gold);
+      font-family: "Playfair Display", serif;
+      font-size: 22px;
+    }
+
+    .exercise-panel li {
+      margin-bottom: 8px;
+      color: rgba(255,248,236,0.8);
+    }
+
+    .glossary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .glossary-card {
+      padding: 14px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: #fffaf2;
+    }
+
+    .glossary-card strong {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--teal);
+    }
+
+    .glossary-card span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .floating-pdf {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 1002;
+      display: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 16px;
+      color: #22170a;
+      background: var(--gold);
+      box-shadow: 0 10px 26px rgba(0,0,0,0.22);
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    @media (max-width: 820px) {
+      .book { width: calc(100vw - 18px); }
+      .page { min-height: auto; padding: 24px; }
+      .hero-grid, .chapter-tools, .lens-grid, .toc-grid, .glossary-grid { grid-template-columns: 1fr; }
+      .chapter-head { grid-template-columns: 1fr; }
+      .chapter-num { width: 48px; height: 48px; font-size: 23px; }
+      .mini-flow { grid-template-columns: 1fr; }
+      .flow-arrow { transform: rotate(90deg); text-align: center; }
+      .topbar small { display: none; }
+      .brand { font-size: 14px; }
+      .nav-actions .btn:not(.primary) { display: none; }
+      .floating-pdf { display: block; }
+    }
+
+    @media print {
+      body {
+        background: white !important;
+        font-size: 12px;
+      }
+      .topbar, .progress-line, .toc-drawer, .floating-pdf {
+        display: none !important;
+      }
+      .book {
+        width: 100%;
+        padding: 0;
+      }
+      .page {
+        width: 100%;
+        min-height: calc(297mm - 0.6in);
+        margin: 0;
+        padding: 0.3in;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        page-break-after: always;
+      }
+      .page.compact {
+        min-height: calc(297mm - 0.6in);
+      }
+      .topic-card, .code-block, .exercise-panel, .mermaid-wrap, .diagram-panel {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .lens-grid, .toc-grid, .chapter-tools, .glossary-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      @page {
+        size: A4;
+        margin: 0.3in;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar" aria-label="Book navigation">
+    <div class="brand"><span class="brand-mark">AI</span><span>AI Agent Engineering Masterbook</span></div>
+    <small>Part 1 - Programming Foundations</small>
+    <div class="nav-actions">
+      <button class="btn" id="tocToggle" type="button">Contents</button>
+      <button class="btn primary" type="button" onclick="window.print()">Download PDF</button>
+    </div>
+  </nav>
+  <div class="progress-line" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+  <aside class="toc-drawer" id="tocDrawer" aria-label="Table of contents">
+    <h2>Contents</h2>
+    <div id="tocDrawerLinks"></div>
+  </aside>
+  <button class="floating-pdf" type="button" onclick="window.print()">Download PDF</button>
+
+  <main class="book">
+    <section class="page hero" id="cover">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Part 1 of 15 - Beginner to Production</div>
+          <h1>Programming Foundations</h1>
+          <p>Yeh part aapko programming ke absolute basics se production-level thinking tak le jaata hai. Har concept ko Hinglish mein samjhaya gaya hai: what, why, how, internal working, mistakes, industry use, code, diagrams, interview prep aur exercises.</p>
+          <div class="metric-grid">
+            <div class="metric"><strong>12</strong><span>Core chapters</span></div>
+            <div class="metric"><strong>103</strong><span>Topic cards</span></div>
+            <div class="metric"><strong>18</strong><span>Learning lenses</span></div>
+            <div class="metric"><strong>A4</strong><span>Print ready</span></div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h2>How to think while reading</h2>
+          <p>Jab bhi naya concept dekho, pehle problem socho: "Iski zaroorat kyu padi?" Phir mental model banao: "Data kahan se aaya, memory mein kya hua, output kaise bana?" Isi pattern se aap independently learn karna start karoge.</p>
+          <div class="mini-flow">
+            <div class="flow-box">Problem</div><div class="flow-arrow">-></div>
+            <div class="flow-box">Concept</div><div class="flow-arrow">-></div>
+            <div class="flow-box">Production Use</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="page compact" id="table-of-contents">
+      <div class="chapter-head">
+        <div class="chapter-num">P1</div>
+        <div>
+          <h2>Table of Contents</h2>
+          <p>Part 1 sirf programming foundations cover karta hai. Future parts ka summary yahan intentionally nahi diya gaya hai, kyunki focus ek part ko complete mastery tak le jaana hai.</p>
+        </div>
+      </div>
+      <div class="banner">
+        <h3>Study Rule</h3>
+        <p>Har chapter mein pehle intuition padho, phir diagram dekho, phir code run karo, phir mini exercise solve karo. Next time jab koi topic unknown lage, isi sequence ko repeat karna: problem -> mental model -> code -> edge cases -> production concern.</p>
+      </div>
+      <div class="toc-grid" id="tocCards"></div>
+    </section>
+
+    <section class="page compact" id="thinking-framework">
+      <div class="chapter-head">
+        <div class="chapter-num">0</div>
+        <div>
+          <h2>Beginner Thinking Framework</h2>
+          <p>Agar aapko bilkul clue nahi hota, toh yeh framework use karo. Programming seekhna syntax yaad karna nahi hai; programming ka matlab hai problem ko small executable instructions mein todna.</p>
+        </div>
+      </div>
+      <div class="chapter-tools">
+        <div class="tool-card">
+          <h3>Step 1 - Input identify karo</h3>
+          <p>Kaunsa data program ko milega? User input, file, API response, database row, ya fixed value? Input clear nahi hai toh code guesswork ban jaata hai.</p>
+        </div>
+        <div class="tool-card">
+          <h3>Step 2 - Transformation socho</h3>
+          <p>Data par kaunsa rule apply hoga? Calculation, filtering, sorting, validation, formatting, ya network request? Yeh actual logic hai.</p>
+        </div>
+        <div class="tool-card">
+          <h3>Step 3 - Output define karo</h3>
+          <p>Program kya return karega? Screen text, file, JSON, database update, model prediction, ya error message? Output testable hona chahiye.</p>
+        </div>
+        <div class="tool-card">
+          <h3>Step 4 - Failure case pakdo</h3>
+          <p>Agar input empty, wrong type, missing file, slow network, duplicate data, ya permission issue ho toh kya hoga? Production thinking yahi se start hoti hai.</p>
+        </div>
+      </div>
+      <div class="mermaid-wrap">
+        <p class="diagram-title">Universal Programming Flowchart</p>
+        <div class="mermaid">
+flowchart LR
+  A[Need or Problem] --> B[Input Data]
+  B --> C[Validate]
+  C --> D[Transform with Logic]
+  D --> E[Output]
+  E --> F[Test and Debug]
+  F --> G[Improve for Production]
+        </div>
+      </div>
+      <div class="callout remember">
+        <h3>Remember This</h3>
+        <p>Next time jab koi topic samajh nahi aaye, khud se 5 sawaal pucho: iski need kya hai, data kahan store hota hai, control kis order mein chalta hai, failure kaise handle hoga, aur industry mein yeh kahan use hoga?</p>
+      </div>
+    </section>
+
+    <div id="chapters"></div>
+
+    <section class="page compact" id="glossary">
+      <div class="chapter-head">
+        <div class="chapter-num">G</div>
+        <div>
+          <h2>Glossary and Revision Notes</h2>
+          <p>Revision ka goal definitions ratna nahi hai. Goal yeh hai ki aap concept ko dekhte hi uska use-case, memory behavior, code shape aur production risk samajh sako.</p>
+        </div>
+      </div>
+      <div class="glossary-grid" id="glossaryGrid"></div>
+      <div class="exercise-panel">
+        <h3>Final Mini Project - Programming Foundations</h3>
+        <ol>
+          <li>Python mein ek command-line expense tracker banao jo input lega, list/dictionary mein store karega, JSON file mein save karega, aur total category-wise show karega.</li>
+          <li>Usmein error handling add karo: invalid amount, missing file, empty category, corrupted JSON.</li>
+          <li>Ek REST API mock karo: function create_expense, read_expenses, update_expense, delete_expense likho.</li>
+          <li>Big O analyze karo: search by id O(n) hai ya hashmap se O(1) ho sakta hai?</li>
+          <li>Git repo banao, virtual environment use karo, README mein setup steps likho.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const makeTopic = (n, w, y, h, code, extra = {}) => ({ n, w, y, h, code, ...extra });
+
+    const chapters = [
+      {
+        id: "programming-basics",
+        no: 1,
+        title: "Programming Basics",
+        intro: "Programming ka matlab computer ko exact instructions dena hai. Human vague soch sakta hai, par computer deterministic hota hai: jo instruction milega wahi execute karega.",
+        why: "AI agent engineering mein programming basics zaroori hain kyunki agent ka brain LLM ho sakta hai, lekin tools, APIs, memory, databases, workflows aur deployment code se hi chalenge.",
+        diagram: "flowchart LR\n  Human[Human Problem] --> Logic[Algorithmic Thinking]\n  Logic --> Code[Source Code]\n  Code --> Runtime[Runtime Execution]\n  Runtime --> Output[Useful Output]\n  Runtime --> Debug[Debug Feedback]",
+        topics: [
+          makeTopic("What is Programming?", "Programming ek process hai jisme hum problem ko precise steps mein convert karke computer se execute karwate hain.", "Hum programming isliye karte hain taaki repetitive kaam automate ho, decisions consistent ho, aur large-scale systems reliable tareeke se chal sakein.", "Program source code se start hota hai, runtime usko line-by-line ya compiled instructions ke form mein execute karta hai, input process hota hai aur output banta hai.", "name = input('Your name: ')\nprint('Hello, ' + name)\n# Input: Asha\n# Output: Hello, Asha", { types: ["Imperative", "Object-oriented", "Functional", "Event-driven"], industry: "AI agents mein tool calling, workflow orchestration, memory storage, logging aur API integration programming se hota hai.", analogy: "Recipe jaise: ingredients input hain, steps algorithm hain, final dish output hai." }),
+          makeTopic("Compiler vs Interpreter", "Compiler poore source code ko pehle machine-friendly form mein convert karta hai; interpreter code ko generally step-by-step execute karta hai.", "Is difference se performance, debugging speed, deployment style aur error discovery ka behavior samajh aata hai.", "Compiled language build step leti hai; interpreted language runtime par code padhkar execute karti hai. Python interpreter bytecode banata hai aur virtual machine mein chalata hai.", "print('Python is interpreted style')\n# Python file run karte hi interpreter execute karta hai", { types: ["Compiler", "Interpreter", "JIT compiler", "Bytecode VM"], industry: "Production mein compiled Go/Rust services fast hoti hain; Python AI scripts flexible aur fast-to-build hote hain." }),
+          makeTopic("Variables", "Variable ek named reference hota hai jo kisi value ya object ko point karta hai.", "Program ko state yaad rakhni hoti hai: user name, score, token count, file path, API response, model config.", "Python mein variable name object se bind hota hai. Assignment naya object point karwa sakta hai; old object garbage collection ke liye eligible ho sakta hai.", "tokens_used = 120\ncost_per_token = 0.00001\ntotal_cost = tokens_used * cost_per_token\nprint(total_cost)", { types: ["Local", "Global", "Instance", "Environment variable"], industry: "LLM app mein temperature, max_tokens, api_key, session_id variables ke through manage hote hain." }),
+          makeTopic("Constants", "Constant aisi value hoti hai jo program ke execution ke dauran change nahi honi chahiye.", "Magic numbers avoid hote hain, configuration readable hoti hai, aur accidental changes se bugs kam hote hain.", "Python hard constant enforce nahi karta; convention se uppercase names use karte hain. Runtime phir bhi value badal sakta hai, isliye discipline zaroori hai.", "MAX_RETRIES = 3\nTIMEOUT_SECONDS = 10\nprint(MAX_RETRIES, TIMEOUT_SECONDS)", { types: ["Numeric constants", "String constants", "Config constants", "Enum-like constants"], industry: "API retry limits, model names, rate limits, file paths constants ke form mein rakhe jaate hain." }),
+          makeTopic("Comments", "Comment code ke andar human-readable explanation hoti hai jo runtime execute nahi karta.", "Future reader ko intent samajh aata hai, complex logic explain hota hai, aur maintenance easy hoti hai.", "Interpreter comment marker ke baad text ignore karta hai. Python mein # single-line comment ke liye use hota hai; docstring documentation ke liye use hoti hai.", "# User input ko integer mein convert kar rahe hain\nage = int(input('Age: '))\nprint(age >= 18)", { types: ["Single-line", "Block style", "Docstring", "TODO comment"], industry: "Production code mein comments business rule, security concern, non-obvious tradeoff ya temporary workaround explain karte hain." }),
+          makeTopic("Input/Output", "Input woh data hai jo program bahar se leta hai; output woh result hai jo program bahar bhejta hai.", "Software user, files, APIs, sensors, databases aur models se interact karta hai. I/O ke bina program isolated calculation ban jaata hai.", "Input stream ya function ke through data memory mein aata hai. Output stdout, file, network response ya UI mein write hota hai.", "city = input('City: ')\nprint('Weather request for', city)", { types: ["stdin/stdout", "File I/O", "Network I/O", "Database I/O"], industry: "Agent user prompt input leta hai, tools ko call karta hai, aur answer output karta hai." }),
+          makeTopic("Keywords", "Keywords language ke reserved words hote hain jinka special meaning hota hai.", "Parser ko code structure samajhne ke liye fixed vocabulary chahiye: if, for, def, class, return jaise words grammar banate hain.", "Lexical analyzer source code ko tokens mein todta hai. Keyword token identify hote hi parser usko language rule ke according process karta hai.", "import keyword\nprint(keyword.kwlist[:8])", { types: ["Control keywords", "Function/class keywords", "Exception keywords", "Import keywords"], industry: "Interview mein keyword aur identifier difference poocha jaata hai; reserved word variable name nahi ban sakta." }),
+          makeTopic("Arithmetic Operators", "Arithmetic operators numbers par mathematical operations perform karte hain.", "Calculations, billing, scoring, statistics, metrics, model cost, ranking aur game logic ke liye operators basic building blocks hain.", "CPU ya interpreter operands load karta hai, operation apply karta hai, result object create ya update hota hai.", "a = 10\nb = 3\nprint(a + b, a - b, a * b, a / b, a // b, a % b, a ** b)", { types: ["+", "-", "*", "/", "//", "%", "**"], industry: "Token cost calculation, latency average, batch size planning aur retry backoff mein arithmetic use hota hai." }),
+          makeTopic("Logical Operators", "Logical operators boolean expressions ko combine karte hain: and, or, not.", "Real decisions multiple conditions par depend karte hain: user logged in hai AND quota available hai AND request valid hai.", "Python short-circuit evaluation use karta hai: and mein first false milte hi stop, or mein first true milte hi stop.", "is_paid = True\nhas_quota = False\nprint(is_paid and has_quota)\nprint(is_paid or has_quota)\nprint(not has_quota)", { types: ["and", "or", "not", "short-circuit"], industry: "Access control, guardrails, validation pipelines aur feature flags logical operators se bante hain." }),
+          makeTopic("Comparison Operators", "Comparison operators do values compare karke True ya False return karte hain.", "Conditions, filters, search, validation aur tests mein comparison se program decide karta hai next step kya hoga.", "Operands evaluate hote hain, type-compatible comparison rule apply hota hai, boolean result return hota hai.", "score = 82\nprint(score >= 80)\nprint(score == 100)\nprint(score != 0)", { types: ["==", "!=", ">", "<", ">=", "<="], industry: "Fraud thresholds, recommendation filters, API status checks aur ranking conditions comparisons use karte hain." }),
+          makeTopic("Assignment Operators", "Assignment operators variable ko value assign ya update karte hain.", "State update karna har program ka core hai: counter increment, balance change, list update, config replace.", "Assignment name binding update karta hai. Compound assignment existing value read karke operation apply karta hai aur result assign karta hai.", "count = 0\ncount += 1\ncount *= 5\nprint(count)", { types: ["=", "+=", "-=", "*=", "/=", "%="], industry: "Analytics counters, retry attempts, pagination offsets aur training epoch counters assignment se update hote hain." }),
+          makeTopic("Expressions", "Expression code ka woh part hai jo evaluate hokar value produce karta hai.", "Expressions se complex logic concise banti hai: calculation, function call, comparison, conditional value.", "Interpreter expression tree banata hai, precedence ke according operands evaluate karta hai, phir final value return hoti hai.", "price = 100\ntax = 18\ntotal = price + (price * tax / 100)\nprint(total)", { types: ["Arithmetic expression", "Boolean expression", "Function-call expression", "Conditional expression"], industry: "Rule engines, pricing systems, ranking formulas aur feature engineering expressions se operate karte hain." }),
+          makeTopic("Type Conversion", "Type conversion ek data type ko doosre type mein convert karna hai.", "User input mostly string hota hai, lekin calculation ke liye integer/float chahiye. API JSON values bhi convert karni padti hain.", "Constructor functions jaise int(), float(), str(), bool() naya object banate hain ya compatible representation return karte hain.", "raw_age = '21'\nage = int(raw_age)\nprint(age + 1)", { types: ["Implicit", "Explicit", "Lossless", "Lossy"], industry: "CSV parsing, JSON validation, database inserts aur ML preprocessing mein type conversion critical hai." }),
+          makeTopic("String Formatting", "String formatting variables ko readable text template mein insert karna hai.", "Logs, UI messages, prompts, SQL-safe templates, filenames aur API payloads readable banane ke liye formatting chahiye.", "Python f-string expression evaluate karta hai aur final string object create karta hai.", "name = 'Asha'\nscore = 91.456\nprint(f'{name} scored {score:.2f}%')", { types: ["f-string", "format()", "% formatting", "Template strings"], industry: "Prompt engineering, logs, notifications, reports aur debugging output formatting se readable hote hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Simple I/O and variables", code: "name = input('Name: ')\nage = int(input('Age: '))\nprint(f'Hello {name}, next year you will be {age + 1}')", output: "Name: Ravi\nAge: 20\nHello Ravi, next year you will be 21" },
+          { level: "Intermediate", title: "Cost calculator", code: "tokens = 12500\ncost_per_1k = 0.002\ncost = (tokens / 1000) * cost_per_1k\nprint(f'Estimated cost: ${cost:.4f}')", output: "Estimated cost: $0.0250" },
+          { level: "Real world", title: "API request validation thinking", code: "api_key = 'sk-demo'\nprompt = 'Summarize this PDF'\nhas_access = bool(api_key) and len(prompt) > 0\nprint('Allowed' if has_access else 'Blocked')", output: "Allowed" }
+        ]
+      },
+      {
+        id: "data-types",
+        no: 2,
+        title: "Data Types",
+        intro: "Data type batata hai value kis nature ki hai aur us par kaunse operations valid hain. Galat type samajhne se bugs, crashes aur wrong outputs aate hain.",
+        why: "AI systems mein prompt text string hota hai, token count integer hota hai, similarity score float hota hai, metadata dictionary hoti hai, aur dataset list hota hai.",
+        diagram: "flowchart TD\n  Data[Data] --> Primitive[Primitive Types]\n  Data --> Collections[Collection Types]\n  Data --> Missing[None or Null]\n  Primitive --> Int[Integer]\n  Primitive --> Float[Float]\n  Primitive --> Bool[Boolean]\n  Primitive --> Str[String]\n  Collections --> List[List]\n  Collections --> Tuple[Tuple]\n  Collections --> Set[Set]\n  Collections --> Dict[Dictionary]",
+        topics: [
+          makeTopic("Integer", "Integer whole number hota hai without decimal.", "Counting, indexing, IDs, retries, token counts aur pagination mein integer chahiye.", "Python int arbitrary precision support karta hai; memory needed digits ke according grow kar sakti hai.", "users = 42\nretries = 3\nprint(users + retries)", { types: ["Positive", "Negative", "Zero", "Large integer"], industry: "Database IDs, HTTP status code, vector dimension aur queue count integer hote hain." }),
+          makeTopic("Float", "Float decimal number hota hai jo approximate real value represent karta hai.", "Scores, probabilities, prices, distances, temperatures aur ML metrics decimal mein aate hain.", "Python float IEEE 754 double precision use karta hai; kuch decimal values exact represent nahi hoti.", "similarity = 0.8732\nthreshold = 0.80\nprint(similarity >= threshold)", { types: ["Positive float", "Negative float", "Scientific notation", "NaN/Infinity"], industry: "Embedding similarity, model confidence, latency percentiles aur cost estimates float hote hain." }),
+          makeTopic("Boolean", "Boolean sirf True ya False value represent karta hai.", "Decision making, flags, validation, authentication state aur feature toggles boolean se express hote hain.", "Boolean internally int ka subclass hai Python mein, lekin semantic meaning truth value ka hota hai.", "is_admin = False\nhas_token = True\nprint(has_token and not is_admin)", { types: ["True", "False", "Truthy", "Falsy"], industry: "Permission checks, guardrails enabled, cache hit, payment verified jaise flags boolean hote hain." }),
+          makeTopic("String", "String text data ka sequence hota hai.", "Names, prompts, logs, URLs, JSON keys, file paths aur natural language data strings mein hota hai.", "Python string immutable Unicode sequence hoti hai; modification new string object banata hai.", "prompt = 'Explain recursion simply'\nprint(prompt.upper())\nprint(len(prompt))", { types: ["Single-line", "Multi-line", "Raw string", "Formatted string"], industry: "LLM prompts, user messages, API routes, SQL statements aur logs strings hote hain." }),
+          makeTopic("List / Arrays", "List ordered mutable collection hoti hai; array fixed-type optimized collection ho sakta hai.", "Multiple items store karne, iterate karne, append karne, filter karne aur batches banane ke liye list needed hai.", "Python list dynamic array hai; internally references contiguous memory block mein stored hote hain.", "tasks = ['read', 'code']\ntasks.append('test')\nprint(tasks)", { types: ["List", "Array", "Nested list", "Dynamic array"], industry: "Chat history, dataset rows, tool results, batch requests aur UI items lists mein store hote hain." }),
+          makeTopic("Tuple", "Tuple ordered immutable collection hoti hai.", "Jab fixed group of values return karni ho aur accidental change avoid karna ho, tuple useful hai.", "Tuple object creation ke baad size/content reference level par stable rehta hai; hashable values ho toh tuple dict key ban sakta hai.", "point = (10, 20)\nx, y = point\nprint(x, y)", { types: ["Single tuple", "Pair", "Named tuple", "Nested tuple"], industry: "Coordinates, database row snapshots, function multiple returns aur immutable configs tuples use karte hain." }),
+          makeTopic("Set", "Set unordered collection hoti hai jisme unique items hote hain.", "Duplicates remove karna, membership fast check karna, intersection/union operations karna set ka use hai.", "Set hash table use karta hai; average membership check O(1) hota hai.", "emails = ['a@x.com', 'b@x.com', 'a@x.com']\nunique = set(emails)\nprint(unique)", { types: ["set", "frozenset", "Union", "Intersection"], industry: "Unique users, deduplication, permissions, tags aur visited nodes set se handle hote hain." }),
+          makeTopic("Dictionary / Objects", "Dictionary key-value mapping hoti hai; JavaScript object bhi similar mapping style provide karta hai.", "Structured data store karna ho jaise user profile, API response, config, metadata, tabular row, toh dictionary natural choice hai.", "Python dict hash table use karta hai; key hash ke through bucket locate hoti hai aur value access hoti hai.", "user = {'name': 'Asha', 'role': 'engineer'}\nprint(user['name'])\nuser['active'] = True\nprint(user)", { types: ["dict", "Nested dict", "JSON object", "Default dict"], industry: "API JSON, model config, database records, tool schemas aur agent memory dictionaries mein hoti hai." }),
+          makeTopic("Null / None", "None absence of value represent karta hai.", "Kabhi data missing hota hai, optional response nahi aata, function kuch return nahi karta. None absence ko explicit banata hai.", "Python function without return automatically None return karta hai. None singleton object hai.", "result = None\nif result is None:\n    print('No result yet')", { types: ["None", "null in JSON", "NULL in SQL", "undefined in JS"], industry: "Optional fields, missing database values, empty API responses aur cache miss None/null se represent hote hain." }),
+          makeTopic("Mutable vs Immutable", "Mutable object change ho sakta hai; immutable object create hone ke baad change nahi hota.", "Mutation behavior samajhna bugs avoid karta hai, especially shared references, default arguments aur caching mein.", "Mutable object same identity ke saath internal state change karta hai. Immutable operation usually new object banata hai.", "items = [1, 2]\nother = items\nitems.append(3)\nprint(other)\nname = 'AI'\nname = name + ' Agent'\nprint(name)", { types: ["Mutable: list/dict/set", "Immutable: int/float/str/tuple", "Shallow copy", "Deep copy"], industry: "State management, concurrent code, caching, function defaults aur API payload mutation mein yeh concept critical hai." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Type inspection", code: "values = [42, 3.14, True, 'agent', None]\nfor value in values:\n    print(value, type(value).__name__)", output: "42 int\n3.14 float\nTrue bool\nagent str\nNone NoneType" },
+          { level: "Intermediate", title: "Dictionary from list", code: "users = ['asha', 'ravi', 'asha']\ncounts = {}\nfor user in users:\n    counts[user] = counts.get(user, 0) + 1\nprint(counts)", output: "{'asha': 2, 'ravi': 1}" },
+          { level: "Real world", title: "Agent message object", code: "message = {\n    'role': 'user',\n    'content': 'Find my latest invoice',\n    'metadata': {'source': 'chat', 'safe': True}\n}\nprint(message['metadata']['safe'])", output: "True" }
+        ]
+      },
+      {
+        id: "control-flow",
+        no: 3,
+        title: "Control Flow",
+        intro: "Control flow decide karta hai code kis order mein chalega. Bina control flow program straight line script hota; with control flow it can choose, repeat, skip and stop.",
+        why: "Agents ko conditionally tools call karne, retry karne, loop through documents, stop on error, aur lazy generate karne ke liye control flow chahiye.",
+        diagram: "flowchart LR\n  Start --> Condition{Condition?}\n  Condition -->|True| ActionA[Run block A]\n  Condition -->|False| ActionB[Run block B]\n  ActionA --> Loop{More items?}\n  ActionB --> End\n  Loop -->|Yes| ActionA\n  Loop -->|No| End",
+        topics: [
+          makeTopic("if / else", "if/else condition ke basis par different code blocks run karta hai.", "Program ko real decisions lene padte hain: allow/block, pass/fail, retry/stop.", "Condition boolean mein evaluate hoti hai. True branch chalegi; warna else branch chalegi.", "age = 17\nif age >= 18:\n    print('Allowed')\nelse:\n    print('Blocked')", { types: ["if", "elif", "else", "ternary expression"], industry: "Authentication, payment validation, model routing aur fallback logic if/else se banta hai." }),
+          makeTopic("Nested Conditions", "Nested condition ka matlab ek condition ke andar dusri condition.", "Complex rules multi-level hote hain: logged in ho, phir role check karo, phir quota check karo.", "Outer branch execute hone ke baad inner condition evaluate hoti hai. Indentation scope define karta hai.", "logged_in = True\nrole = 'admin'\nif logged_in:\n    if role == 'admin':\n        print('Dashboard access')", { types: ["Nested if", "if inside loop", "guard clauses", "decision tree"], industry: "Compliance workflows, loan approval rules aur multi-step validation nested conditions use karte hain." }),
+          makeTopic("for Loop", "for loop iterable ke har item par same logic run karta hai.", "Lists, files, database rows, API pages, documents aur tokens process karne ke liye repetition chahiye.", "Iterator se next item liya jaata hai; StopIteration aane par loop end hota hai.", "documents = ['a.pdf', 'b.pdf']\nfor doc in documents:\n    print('Indexing', doc)", { types: ["for item in list", "range loop", "enumerate", "nested for"], industry: "Batch processing, dataset training, web scraping aur vector indexing for loops se hota hai." }),
+          makeTopic("while Loop", "while loop tab tak repeat karta hai jab tak condition True hai.", "Jab repeat count pehle se fixed nahi hai, jaise retry until success, poll until job done, tab while use hota hai.", "Condition har iteration se pehle check hoti hai. Agar condition kabhi False nahi hoti toh infinite loop ban sakta hai.", "attempts = 0\nwhile attempts < 3:\n    print('Trying', attempts)\n    attempts += 1", { types: ["condition loop", "infinite loop with break", "polling loop", "retry loop"], industry: "Background jobs, queue polling, network retry aur real-time monitoring while loops use karte hain." }),
+          makeTopic("break", "break current loop ko immediately stop karta hai.", "Jab desired item mil gaya, error fatal hai, ya unnecessary iterations avoid karni hain, break useful hai.", "Runtime loop body se exit karke next statement after loop par jump karta hai.", "numbers = [3, 8, 11, 18]\nfor n in numbers:\n    if n > 10:\n        print('found', n)\n        break", { types: ["break in for", "break in while", "nested break pattern"], industry: "Search early stop, rate-limit stop, first successful tool call aur validation fail-fast mein break use hota hai." }),
+          makeTopic("continue", "continue current iteration skip karke next iteration start karta hai.", "Invalid, empty, duplicate ya irrelevant items ignore karne ke liye continue clean code deta hai.", "Loop control current block ka remaining part skip karta hai aur next item/condition par jaata hai.", "items = ['', 'hello', '', 'agent']\nfor item in items:\n    if not item:\n        continue\n    print(item.upper())", { types: ["skip invalid", "skip duplicate", "filter style", "guard continue"], industry: "Data cleaning, log processing, crawler filtering aur validation pipelines continue use karte hain." }),
+          makeTopic("pass", "pass no-operation statement hai; syntax ke liye empty block fill karta hai.", "Jab structure abhi banana ho par implementation baad mein karni ho, pass placeholder kaam aata hai.", "Interpreter pass execute karta hai but kuch effect nahi hota; block syntactically valid reh jaata hai.", "def future_feature():\n    pass\n\nclass AgentMemory:\n    pass", { types: ["function placeholder", "class placeholder", "exception ignore placeholder"], industry: "Scaffolding, interface planning aur incremental development mein pass use hota hai." }),
+          makeTopic("Iterators", "Iterator object next item one-by-one provide karta hai.", "Large data ko memory mein ek saath load kiye bina process karna possible hota hai.", "__iter__ method iterator return karta hai; __next__ next value deta hai; end par StopIteration raise hota hai.", "items = iter(['a', 'b'])\nprint(next(items))\nprint(next(items))", { types: ["Iterable", "Iterator", "Custom iterator", "Lazy iterator"], industry: "File lines, database cursors, API pagination aur streaming responses iterators use karte hain." }),
+          makeTopic("Generators", "Generator function yield ke through values lazily produce karta hai.", "Memory efficient pipelines banane ke liye generators important hain, especially big files/data streams mein.", "Function state pause hoti hai yield par; next call par wahi se resume hoti hai.", "def numbers(limit):\n    for i in range(limit):\n        yield i * i\n\nfor value in numbers(3):\n    print(value)", { types: ["Generator function", "Generator expression", "Infinite generator", "Pipeline generator"], industry: "Streaming logs, PDF chunking, token streaming aur ETL pipelines generators use karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Grade decision", code: "score = 76\nif score >= 90:\n    grade = 'A'\nelif score >= 60:\n    grade = 'B'\nelse:\n    grade = 'C'\nprint(grade)", output: "B" },
+          { level: "Intermediate", title: "Filter valid prompts", code: "prompts = ['', 'summarize', '   ', 'translate']\nvalid = []\nfor prompt in prompts:\n    if not prompt.strip():\n        continue\n    valid.append(prompt)\nprint(valid)", output: "['summarize', 'translate']" },
+          { level: "Real world", title: "Retry loop", code: "max_retries = 3\nfor attempt in range(1, max_retries + 1):\n    print('Calling API attempt', attempt)\n    success = attempt == 2\n    if success:\n        print('Success')\n        break", output: "Calling API attempt 1\nCalling API attempt 2\nSuccess" }
+        ]
+      },
+      {
+        id: "functions",
+        no: 4,
+        title: "Functions",
+        intro: "Function reusable named block hota hai jo input leta hai, logic apply karta hai aur optional output return karta hai.",
+        why: "Functions code ko modular, testable, reusable aur readable banate hain. Production systems functions ke bina maintain nahi hote.",
+        diagram: "flowchart LR\n  Input[Arguments] --> Function[Function Body]\n  Function --> Return[Return Value]\n  Function --> SideEffect[Optional Side Effect]\n  Caller[Caller] --> Function",
+        topics: [
+          makeTopic("Function Declaration", "Function declaration reusable block define karta hai.", "Repeated logic copy-paste karna bugs badhata hai. Function ek single reliable unit banata hai.", "def keyword function object create karta hai aur name se bind karta hai. Call karne par frame create hota hai.", "def greet(name):\n    print('Hello', name)\n\ngreet('Asha')", { types: ["Named function", "Method", "Nested function", "Async function"], industry: "API handlers, data validators, tool functions aur pipeline steps functions hote hain." }),
+          makeTopic("Parameters", "Parameters function ke input placeholders hote hain.", "Same function different data par kaam kare, iske liye parameters chahiye.", "Call ke waqt arguments parameter names se bind hote hain; local scope mein available hote hain.", "def add(a, b):\n    return a + b\nprint(add(2, 3))", { types: ["Positional", "Keyword", "*args", "**kwargs"], industry: "Tool schemas, API endpoints aur model config functions parameters receive karte hain." }),
+          makeTopic("Return Values", "Return value function ka output hota hai.", "Function ka result caller use kar sake: store, print, compare, pass to another function.", "return statement current function frame end karta hai aur value caller ko deta hai.", "def double(x):\n    return x * 2\nresult = double(5)\nprint(result)", { types: ["Single value", "Multiple values", "None return", "Early return"], industry: "Parsers, API clients, calculators aur model wrappers return values dete hain." }),
+          makeTopic("Default Arguments", "Default argument parameter ki fallback value hoti hai jab caller value na de.", "Common configuration repeat nahi karni padti, function easy to call hota hai.", "Function define time par default object evaluate hota hai. Mutable default dangerous ho sakta hai.", "def connect(timeout=10):\n    print('timeout', timeout)\nconnect()\nconnect(30)", { types: ["Safe immutable default", "Keyword default", "Dangerous mutable default"], industry: "API timeout, model temperature, page size, retry count defaults use karte hain." }),
+          makeTopic("Lambda Functions", "Lambda small anonymous function hota hai.", "Short one-line transformation ke liye lambda concise hota hai, especially sorting/filtering mein.", "lambda expression function object create karta hai bina formal def name ke.", "items = [('a', 3), ('b', 1)]\nitems.sort(key=lambda pair: pair[1])\nprint(items)", { types: ["Single-expression lambda", "Sort key lambda", "Map/filter lambda"], industry: "Data transformations, callback functions aur quick ranking keys mein lambda useful hai." }),
+          makeTopic("Recursion", "Recursion mein function khud ko call karta hai smaller problem solve karne ke liye.", "Tree, graph, nested JSON, file directories aur divide-and-conquer problems naturally recursive hote hain.", "Har recursive call new stack frame banata hai. Base case na ho toh stack overflow ya recursion limit hit hoti hai.", "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\nprint(factorial(5))", { types: ["Direct recursion", "Indirect recursion", "Tail recursion idea", "Tree recursion"], industry: "AST parsing, nested menus, folder traversal aur tree algorithms recursion use karte hain." }),
+          makeTopic("Scope", "Scope define karta hai variable code ke kis region mein accessible hai.", "Name collision avoid hota hai, encapsulation improve hoti hai, bugs traceable hote hain.", "Python LEGB rule follow karta hai: Local, Enclosing, Global, Built-in.", "x = 'global'\ndef show():\n    x = 'local'\n    print(x)\nshow()\nprint(x)", { types: ["Local", "Enclosing", "Global", "Built-in"], industry: "Config management, closures, module design aur testing mein scope understanding zaroori hai." }),
+          makeTopic("Closures", "Closure nested function hota hai jo outer function ke variables yaad rakhta hai.", "State ko controlled tareeke se preserve karna ho bina class banaye, closure useful hai.", "Outer frame ke variables cell objects mein store hote hain jinko inner function reference karta hai.", "def make_multiplier(factor):\n    def multiply(x):\n        return x * factor\n    return multiply\ntriple = make_multiplier(3)\nprint(triple(4))", { types: ["Stateful closure", "Factory closure", "Callback closure"], industry: "Decorators, callback factories, configuration wrappers aur middleware closures use karte hain." }),
+          makeTopic("Decorators", "Decorator function ko wrap karke uska behavior modify karta hai.", "Logging, timing, authentication, caching aur validation cross-cutting concerns ko cleanly add karne ke liye decorators use hote hain.", "Decorator original function ko input leta hai aur wrapper function return karta hai. @ syntax sugar hai.", "def log_call(fn):\n    def wrapper(*args, **kwargs):\n        print('calling', fn.__name__)\n        return fn(*args, **kwargs)\n    return wrapper\n\n@log_call\ndef hello():\n    print('hi')\nhello()", { types: ["Function decorator", "Decorator with arguments", "Class decorator", "Built-in decorators"], industry: "FastAPI routes, permission checks, cache decorators aur observability wrappers production mein common hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Reusable calculator", code: "def total_price(price, tax_percent):\n    return price + (price * tax_percent / 100)\nprint(total_price(100, 18))", output: "118.0" },
+          { level: "Intermediate", title: "Validation helper", code: "def is_valid_prompt(prompt, min_length=3):\n    return isinstance(prompt, str) and len(prompt.strip()) >= min_length\nprint(is_valid_prompt('AI'))\nprint(is_valid_prompt('Explain AI'))", output: "False\nTrue" },
+          { level: "Real world", title: "Timing decorator", code: "import time\n\ndef timed(fn):\n    def wrapper(*args, **kwargs):\n        start = time.time()\n        result = fn(*args, **kwargs)\n        print('seconds:', round(time.time() - start, 4))\n        return result\n    return wrapper", output: "Decorator ready; apply @timed on any function" }
+        ]
+      },
+      {
+        id: "oop",
+        no: 5,
+        title: "Object-Oriented Programming",
+        intro: "OOP data aur behavior ko objects mein bundle karta hai. Isse real-world entities jaise User, Agent, Tool, Invoice, Message ko code mein model karna natural hota hai.",
+        why: "Large systems mein modules, reusable components, inheritance, interfaces aur stateful objects manage karne ke liye OOP ka mental model useful hai.",
+        diagram: "flowchart TD\n  Class[Class Blueprint] --> Object1[Object A]\n  Class --> Object2[Object B]\n  Object1 --> State[Attributes]\n  Object1 --> Behavior[Methods]\n  Parent[Parent Class] --> Child[Child Class]",
+        topics: [
+          makeTopic("Classes", "Class blueprint hoti hai jisse objects create hote hain.", "Similar objects ka shared structure aur behavior ek jagah define karna maintainable hota hai.", "class statement namespace create karta hai; methods function descriptors ban kar instances ke saath bind hote hain.", "class Agent:\n    role = 'assistant'\n\nprint(Agent.role)", { types: ["Regular class", "Dataclass", "Abstract class", "Mixin"], industry: "Agent, Tool, MemoryStore, DatabaseClient jaise components classes ban sakte hain." }),
+          makeTopic("Objects", "Object class ka concrete instance hota hai.", "Har real entity ka apna state ho sakta hai: user1, user2; agentA, agentB.", "Object heap memory mein state rakhta hai; attribute lookup instance dict se class dict tak ja sakta hai.", "class User:\n    pass\nu = User()\nu.name = 'Asha'\nprint(u.name)", { types: ["Instance object", "Singleton object", "Value object", "Service object"], industry: "Request object, response object, model client object aur session object production mein common hain." }),
+          makeTopic("Constructors", "Constructor object create hote waqt initial state set karta hai.", "Object valid initial state mein start ho, required fields missing na rahein, iske liye constructor use hota hai.", "__init__ method instance create hone ke baad call hota hai aur attributes initialize karta hai.", "class User:\n    def __init__(self, name):\n        self.name = name\nu = User('Asha')\nprint(u.name)", { types: ["__init__", "default constructor", "parameterized constructor", "factory method"], industry: "API clients keys/timeouts ke saath initialize hote hain; database connections config lete hain." }),
+          makeTopic("Inheritance", "Inheritance child class ko parent class ke attributes/methods reuse karne deta hai.", "Common behavior duplicate nahi karna padta; specialized classes extend kar sakti hain.", "Method resolution order parent chain mein method search karta hai. Override child behavior customize karta hai.", "class Tool:\n    def run(self):\n        return 'running'\nclass SearchTool(Tool):\n    pass\nprint(SearchTool().run())", { types: ["Single", "Multiple", "Multilevel", "Mixin inheritance"], industry: "BaseTool se SearchTool, EmailTool, CalendarTool inherit kar sakte hain." }),
+          makeTopic("Polymorphism", "Polymorphism ka matlab same interface, different behavior.", "Code ko concrete class ke bajay capability par depend karna chahiye. Isse flexibility badhti hai.", "Runtime actual object ke method ko call karta hai; same method name alag classes mein different logic de sakta hai.", "class Dog:\n    def speak(self): return 'bark'\nclass Bot:\n    def speak(self): return 'hello'\nfor x in [Dog(), Bot()]:\n    print(x.speak())", { types: ["Method overriding", "Duck typing", "Operator overloading"], industry: "Different LLM providers same generate() interface implement kar sakte hain." }),
+          makeTopic("Encapsulation", "Encapsulation data aur behavior ko class ke andar bundle karke controlled access deta hai.", "Internal state directly mutate hone se bugs aate hain. Methods validation aur invariants protect karte hain.", "Python private enforce nahi karta; underscore conventions use hote hain. Property methods controlled access dete hain.", "class Wallet:\n    def __init__(self):\n        self._balance = 0\n    def deposit(self, amount):\n        if amount > 0:\n            self._balance += amount", { types: ["Public", "Protected convention", "Private name mangling", "Properties"], industry: "User balance, API token, model client internals aur cache state encapsulate karna important hai." }),
+          makeTopic("Abstraction", "Abstraction unnecessary details hide karke essential interface expose karta hai.", "User ko 'send_email' call karna chahiye; SMTP internals samajhna zaroori nahi.", "Abstract class ya interface expected methods define karte hain; concrete classes implementation deti hain.", "from abc import ABC, abstractmethod\nclass Tool(ABC):\n    @abstractmethod\n    def run(self, query):\n        pass", { types: ["Interface", "Abstract base class", "Facade", "Service abstraction"], industry: "Tool abstraction agents ko browser, DB, search, email tools uniformly call karne deti hai." }),
+          makeTopic("Static Methods", "Static method class namespace mein function hota hai jo self ya cls nahi leta.", "Utility logic class se related ho par instance state ki zaroorat na ho, toh staticmethod clean hai.", "@staticmethod descriptor function ko instance binding ke bina return karta hai.", "class Math:\n    @staticmethod\n    def add(a, b):\n        return a + b\nprint(Math.add(2, 3))", { types: ["staticmethod", "classmethod", "instance method"], industry: "Validation helpers, parsers, formatters aur factory utilities static/class methods use karte hain." }),
+          makeTopic("Magic Methods", "Magic methods double underscore methods hote hain jo Python special behavior customize karte hain.", "Objects ko readable print, comparable, iterable, addable ya length-aware banana ho toh magic methods use hote hain.", "Python operations internally special methods call karte hain, jaise len(x) -> x.__len__().", "class Box:\n    def __init__(self, value): self.value = value\n    def __repr__(self): return f'Box({self.value})'\nprint(Box(5))", { types: ["__init__", "__repr__", "__len__", "__eq__", "__iter__"], industry: "Data models, ORM records, Pydantic objects aur custom collections magic methods use karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Simple class", code: "class Agent:\n    def __init__(self, name):\n        self.name = name\n    def introduce(self):\n        return f'I am {self.name}'\nprint(Agent('Planner').introduce())", output: "I am Planner" },
+          { level: "Intermediate", title: "Polymorphic tools", code: "class SearchTool:\n    def run(self, q): return 'search: ' + q\nclass MathTool:\n    def run(self, q): return 'math: ' + q\nfor tool in [SearchTool(), MathTool()]:\n    print(tool.run('2+2'))", output: "search: 2+2\nmath: 2+2" },
+          { level: "Real world", title: "Tool abstraction", code: "class Tool:\n    name = 'base'\n    def run(self, query):\n        raise NotImplementedError\n\nclass WeatherTool(Tool):\n    name = 'weather'\n    def run(self, query):\n        return {'city': query, 'temp': 29}", output: "{'city': 'Delhi', 'temp': 29}" }
+        ]
+      },
+      {
+        id: "error-handling",
+        no: 6,
+        title: "Error Handling",
+        intro: "Error handling ka goal crash hide karna nahi hai; goal predictable failure behavior banana hai. Production software fail hota hai, par controlled way mein fail hona chahiye.",
+        why: "AI agents APIs call karte hain, files padhte hain, user input parse karte hain. Network, permissions, bad data, missing keys, rate limits sab errors create karte hain.",
+        diagram: "flowchart LR\n  Run[Run Risky Code] --> Success{Success?}\n  Success -->|Yes| Result[Return Result]\n  Success -->|No| Catch[except Block]\n  Catch --> Log[Log Context]\n  Catch --> Recover[Fallback or Raise]\n  Recover --> Finally[finally Cleanup]",
+        topics: [
+          makeTopic("try/except", "try/except risky code ko handle karta hai jab exception raise ho.", "Program crash ke bajay meaningful recovery ya message de sakta hai.", "try block execute hota hai; exception type match hone par corresponding except block run hota hai.", "try:\n    value = int('abc')\nexcept ValueError:\n    print('Invalid number')", { types: ["Specific except", "Multiple except", "Catch and re-raise", "else block"], industry: "API parsing, file reading, payment flows aur model calls mein exceptions handle karne padte hain." }),
+          makeTopic("finally", "finally block success ya failure dono cases mein run hota hai.", "Cleanup guaranteed karna ho: file close, lock release, connection cleanup.", "Exception propagate ho ya return ho, finally block exit se pehle execute hota hai.", "file = None\ntry:\n    file = open('missing.txt')\nexcept FileNotFoundError:\n    print('file missing')\nfinally:\n    print('cleanup done')", { types: ["cleanup finally", "resource release", "transaction cleanup"], industry: "Database transactions, file streams, locks aur network sessions cleanup ke liye finally use hota hai." }),
+          makeTopic("Custom Exceptions", "Custom exception domain-specific error represent karta hai.", "Generic error se business meaning lost hota hai. Custom exception caller ko exact failure reason batata hai.", "Custom class Exception inherit karti hai; raise statement object create/throw karta hai.", "class QuotaExceededError(Exception):\n    pass\n\nraise QuotaExceededError('Daily quota finished')", { types: ["Business exception", "Validation exception", "Infrastructure exception"], industry: "QuotaExceeded, PaymentFailed, ToolTimeout, UnsafePrompt jaise custom exceptions production mein useful hote hain." }),
+          makeTopic("Debugging", "Debugging bug ka root cause systematically find aur fix karna hai.", "Symptoms misleading ho sakte hain. Debugging evidence-based thinking sikhata hai.", "Debugger breakpoints, stack frames, variable inspection aur step execution provide karta hai.", "def divide(a, b):\n    print('a=', a, 'b=', b)\n    return a / b\nprint(divide(10, 2))", { types: ["Print debugging", "Debugger", "Logging", "Binary search debugging"], industry: "Production incidents mein logs, traces, metrics aur reproduction steps se debugging hoti hai." }),
+          makeTopic("Logging", "Logging runtime events ko structured record karta hai.", "Production mein print visible nahi hota; logs se hum know karte hain system ne kya kiya.", "Logging module severity levels ke saath record emit karta hai: DEBUG, INFO, WARNING, ERROR.", "import logging\nlogging.basicConfig(level=logging.INFO)\nlogging.info('Agent started')\nlogging.warning('Slow response')", { types: ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"], industry: "Observability, audit trails, security investigation aur agent tool traces logging se possible hote hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Safe int conversion", code: "raw = '42x'\ntry:\n    number = int(raw)\nexcept ValueError:\n    number = 0\nprint(number)", output: "0" },
+          { level: "Intermediate", title: "Custom validation error", code: "class InvalidPrompt(Exception): pass\n\ndef validate(prompt):\n    if not prompt.strip():\n        raise InvalidPrompt('Prompt empty')\n    return True\ntry:\n    validate('')\nexcept InvalidPrompt as e:\n    print(e)", output: "Prompt empty" },
+          { level: "Real world", title: "Logged tool failure", code: "import logging\nlogging.basicConfig(level=logging.INFO)\ntry:\n    raise TimeoutError('tool took too long')\nexcept TimeoutError as e:\n    logging.error('Tool failed: %s', e)", output: "ERROR:root:Tool failed: tool took too long" }
+        ]
+      },
+      {
+        id: "file-handling",
+        no: 7,
+        title: "File Handling",
+        intro: "File handling data ko disk par read/write karne ka skill hai. Files software ko memory ke bahar persistent banati hain.",
+        why: "AI projects PDFs, CSV datasets, JSON configs, XML feeds, binary images, logs aur streamed files ke saath kaam karte hain.",
+        diagram: "flowchart LR\n  Program --> Open[Open File]\n  Open --> Mode[Read or Write Mode]\n  Mode --> Process[Process Data]\n  Process --> Close[Close File]\n  Close --> Persist[Persistent Storage]",
+        topics: [
+          makeTopic("Read/write files", "Text file read/write ka matlab disk se text data lena ya disk par save karna.", "Config, notes, logs, outputs aur intermediate results store karne ke liye files basic tool hain.", "OS file handle provide karta hai; Python context manager close automatically karta hai.", "with open('notes.txt', 'w', encoding='utf-8') as f:\n    f.write('Hello file')\nwith open('notes.txt', 'r', encoding='utf-8') as f:\n    print(f.read())", { types: ["read", "write", "append", "read/write"], industry: "Logs, report output, prompt templates aur cache files read/write hote hain." }),
+          makeTopic("CSV", "CSV comma-separated tabular text format hai.", "Spreadsheets, datasets, exports aur analytics data simple portable format mein store karne ke liye CSV common hai.", "CSV parser delimiter, quotes, headers aur rows ko structured records mein convert karta hai.", "import csv\nrows = [['name', 'score'], ['Asha', 91]]\nwith open('scores.csv', 'w', newline='') as f:\n    csv.writer(f).writerows(rows)", { types: ["Header CSV", "Delimiter variants", "Quoted CSV", "TSV"], industry: "ML datasets, sales exports, analytics logs aur business reports CSV mein milte hain." }),
+          makeTopic("JSON", "JSON lightweight key-value data format hai.", "APIs, configs, tool schemas, model responses aur web apps JSON heavily use karte hain.", "JSON parser text ko dict/list primitives mein convert karta hai; serializer Python objects ko JSON string banata hai.", "import json\nconfig = {'model': 'gpt', 'temperature': 0.2}\ntext = json.dumps(config)\nprint(json.loads(text)['model'])", { types: ["Object", "Array", "Nested JSON", "JSON Lines"], industry: "REST APIs, OpenAPI schemas, agent memory snapshots aur settings JSON use karte hain." }),
+          makeTopic("XML", "XML tagged hierarchical data format hai.", "Legacy enterprise systems, RSS feeds, document formats aur some APIs XML use karte hain.", "XML parser tree banata hai jisme elements, attributes aur text nodes hote hain.", "import xml.etree.ElementTree as ET\nroot = ET.fromstring('<user><name>Asha</name></user>')\nprint(root.find('name').text)", { types: ["Elements", "Attributes", "Namespaces", "XSD schema"], industry: "Banking, government, SOAP APIs aur document processing XML use karte hain." }),
+          makeTopic("PDF basics", "PDF fixed-layout document format hai jisme text, images, fonts aur pages packaged hote hain.", "Reports, invoices, research papers, resumes aur manuals PDFs mein aate hain. RAG systems PDFs ingest karte hain.", "PDF extraction layout-aware hoti hai; text visual order aur stored order alag ho sakte hain.", "# Install library when needed: pip install pypdf\n# from pypdf import PdfReader\n# reader = PdfReader('file.pdf')\n# print(reader.pages[0].extract_text())\nprint('PDF extraction needs a PDF parser library')", { types: ["Text PDF", "Scanned PDF", "Form PDF", "Encrypted PDF"], industry: "PDF Q&A bots, invoice extraction, compliance review aur research assistants PDF processing use karte hain." }),
+          makeTopic("Binary files", "Binary file raw bytes store karta hai, text encoding ke assumptions ke bina.", "Images, audio, videos, models, PDFs, archives aur embeddings binary form mein ho sakte hain.", "Binary mode bytes object read/write karta hai; decoding manually karni padti hai agar text interpret karna ho.", "data = bytes([65, 66, 67])\nwith open('demo.bin', 'wb') as f:\n    f.write(data)\nwith open('demo.bin', 'rb') as f:\n    print(f.read())", { types: ["Images", "Audio", "PDF", "Model weights", "Archives"], industry: "Model checkpoints, uploaded files, image processing aur blob storage binary files handle karte hain." }),
+          makeTopic("File streaming", "File streaming data ko chunks mein process karta hai instead of full file memory mein load karna.", "Large files memory crash kar sakti hain. Streaming scalable aur production-safe approach hai.", "Read loop fixed-size chunks ya line-by-line iterator use karta hai; memory usage bounded rehta hai.", "with open('large.txt', 'w') as f:\n    f.write('line\\n' * 3)\nwith open('large.txt') as f:\n    for line in f:\n        print(line.strip())", { types: ["Line streaming", "Chunk streaming", "Network streaming", "Generator pipeline"], industry: "Large logs, dataset ingestion, video upload aur token streaming streaming approach use karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Write and read text", code: "with open('hello.txt', 'w') as f:\n    f.write('hello')\nwith open('hello.txt') as f:\n    print(f.read())", output: "hello" },
+          { level: "Intermediate", title: "JSON config", code: "import json\nconfig = {'retries': 3, 'debug': True}\nwith open('config.json', 'w') as f:\n    json.dump(config, f)\nwith open('config.json') as f:\n    print(json.load(f)['retries'])", output: "3" },
+          { level: "Real world", title: "Stream log lines", code: "def read_lines(path):\n    with open(path) as f:\n        for line in f:\n            yield line.strip()\n# Use generator for very large files", output: "Line-by-line processing keeps memory stable" }
+        ]
+      },
+      {
+        id: "dsa",
+        no: 8,
+        title: "Data Structures and Algorithms",
+        intro: "Data structures decide karti hain data memory mein kaise organized hoga. Algorithms decide karte hain operations kaise honge. Good engineering = right structure + right algorithm.",
+        why: "AI systems retrieval, ranking, caching, graph traversal, queue processing aur search heavily use karte hain. Big O samajhna scalability ke liye mandatory hai.",
+        diagram: "flowchart TD\n  Problem[Problem Need] --> Structure[Choose Data Structure]\n  Structure --> Algorithm[Choose Algorithm]\n  Algorithm --> Complexity[Analyze Big O]\n  Complexity --> Implement[Implement and Test]\n  Implement --> Scale[Scale Safely]",
+        topics: [
+          makeTopic("Arrays", "Array ordered indexed collection hai, usually contiguous memory idea ke saath.", "Fast index access chahiye toh array/list useful hai.", "Contiguous slots ya references store hote hain; index se direct offset calculate hota hai.", "items = [10, 20, 30]\nprint(items[1])", { types: ["Static array", "Dynamic array", "2D array", "Sparse array"], industry: "Embeddings vectors, batches, UI lists aur datasets arrays/lists use karte hain." }),
+          makeTopic("Linked lists", "Linked list nodes ka chain hota hai jisme each node value aur next pointer rakhta hai.", "Frequent insert/delete middle mein ho aur contiguous memory avoid karni ho toh linked list useful concept hai.", "Each node separately allocated hota hai; traversal pointer follow karke hota hai.", "class Node:\n    def __init__(self, value, next=None):\n        self.value = value\n        self.next = next\nhead = Node(1, Node(2))\nprint(head.next.value)", { types: ["Singly", "Doubly", "Circular", "Skip list idea"], industry: "LRU cache internals, undo history aur low-level memory structures linked-list idea use karte hain." }),
+          makeTopic("Stacks", "Stack LIFO structure hai: last in, first out.", "Undo, call stack, parsing, backtracking aur nested structure validation ke liye stack natural hai.", "Push top par add karta hai; pop top se remove karta hai.", "stack = []\nstack.append('page1')\nstack.append('page2')\nprint(stack.pop())", { types: ["Array stack", "Linked stack", "Call stack", "Monotonic stack"], industry: "Browser history, function calls, expression evaluation aur DFS stacks use karte hain." }),
+          makeTopic("Queues", "Queue FIFO structure hai: first in, first out.", "Tasks fair order mein process karne ke liye queue use hoti hai.", "Enqueue rear par add karta hai; dequeue front se remove karta hai.", "from collections import deque\nq = deque(['job1', 'job2'])\nprint(q.popleft())", { types: ["Simple queue", "Deque", "Priority queue", "Message queue"], industry: "Background jobs, task schedulers, event processing aur agent work queues queue use karte hain." }),
+          makeTopic("Trees", "Tree hierarchical nodes ka structure hai with parent-child relationship.", "Hierarchical data jaise folders, DOM, decisions, parse trees aur org charts represent karne ke liye tree best hai.", "Root se traversal DFS/BFS hota hai; each node children hold karta hai.", "tree = {'root': ['child1', 'child2']}\nprint(tree['root'])", { types: ["Binary tree", "BST", "Heap", "Trie"], industry: "File systems, decision trees, syntax trees, vector indexes aur UI DOM trees use karte hain." }),
+          makeTopic("Graphs", "Graph nodes aur edges ka network hota hai.", "Relationships, dependencies, routes, social links, knowledge graphs aur workflows graph se model hote hain.", "Adjacency list/matrix edges store karti hai; traversal BFS/DFS shortest path jaise algorithms use hote hain.", "graph = {'A': ['B', 'C'], 'B': ['D'], 'C': []}\nprint(graph['A'])", { types: ["Directed", "Undirected", "Weighted", "Cyclic/Acyclic"], industry: "Knowledge graphs, dependency graphs, maps, recommendation systems aur agent planning graphs use karte hain." }),
+          makeTopic("Hashmaps", "Hashmap key-value store hai with fast average lookup.", "ID se record find karna, counts maintain karna, cache banana aur dedupe karna hashmap se efficient hota hai.", "Key hash value bucket decide karta hai; collisions resolve hote hain.", "cache = {'user:1': 'Asha'}\nprint(cache.get('user:1'))", { types: ["Dictionary", "Hash set", "Cache map", "Ordered map"], industry: "Caches, session stores, frequency counts, DB indexes aur JSON objects hashmaps use karte hain." }),
+          makeTopic("Searching", "Searching data structure mein desired item find karna hai.", "Software constantly data find karta hai: user, document, route, keyword, record.", "Linear search item-by-item check karta hai; binary search sorted data ko half reduce karta hai.", "nums = [1, 3, 5, 7]\ntarget = 5\nprint(target in nums)", { types: ["Linear search", "Binary search", "BFS", "DFS"], industry: "Document retrieval, autocomplete, database lookup aur vector search searching problems hain." }),
+          makeTopic("Sorting", "Sorting items ko defined order mein arrange karna hai.", "Ranking, display order, reports, binary search preparation aur scheduling sorting se improve hote hain.", "Comparison-based algorithms items compare/swap karte hain; Python Timsort optimized hybrid algorithm use karta hai.", "scores = [3, 1, 2]\nprint(sorted(scores))", { types: ["Bubble", "Merge", "Quick", "Heap", "Timsort"], industry: "Search results ranking, leaderboard, priority tasks aur analytics sorting use karte hain." }),
+          makeTopic("Big O notation", "Big O input size grow hone par time/space growth describe karta hai.", "Small data par sab fast lagta hai. Production mein growth behavior decide karta hai code scale karega ya fail.", "Constants ignore karke dominant growth term express ki jaati hai: O(1), O(log n), O(n), O(n log n), O(n^2).", "items = list(range(1000))\n# O(1): direct index\nprint(items[10])\n# O(n): membership in list\nprint(999 in items)", { types: ["Time complexity", "Space complexity", "Best/average/worst case", "Amortized analysis"], industry: "API latency, database design, search systems aur model serving pipelines Big O thinking demand karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Frequency hashmap", code: "words = ['ai', 'agent', 'ai']\ncounts = {}\nfor word in words:\n    counts[word] = counts.get(word, 0) + 1\nprint(counts)", output: "{'ai': 2, 'agent': 1}" },
+          { level: "Intermediate", title: "Queue processing", code: "from collections import deque\njobs = deque(['embed pdf', 'index chunks', 'answer query'])\nwhile jobs:\n    print('running:', jobs.popleft())", output: "running: embed pdf\nrunning: index chunks\nrunning: answer query" },
+          { level: "Real world", title: "Graph traversal", code: "graph = {'start': ['search', 'db'], 'search': ['answer'], 'db': ['answer'], 'answer': []}\nvisited = set()\ndef dfs(node):\n    if node in visited: return\n    visited.add(node)\n    for nxt in graph[node]: dfs(nxt)\ndfs('start')\nprint(visited)", output: "{'start', 'search', 'db', 'answer'}" }
+        ]
+      },
+      {
+        id: "apis-networking",
+        no: 9,
+        title: "APIs and Networking",
+        intro: "Networking software ko doosre systems se baat karna sikhata hai. API ek contract hota hai jiske through systems data exchange karte hain.",
+        why: "AI agents tab useful bante hain jab woh tools, search, databases, emails, calendars, payment systems aur model APIs se connect karte hain.",
+        diagram: "flowchart LR\n  Client[Client App] --> Request[HTTP Request]\n  Request --> Server[API Server]\n  Server --> Database[Database or Tool]\n  Database --> Server\n  Server --> Response[HTTP Response]\n  Response --> Client",
+        topics: [
+          makeTopic("HTTP/HTTPS", "HTTP web communication protocol hai; HTTPS encrypted HTTP hai.", "Browsers, APIs, webhooks, model endpoints sab HTTP/HTTPS par depend karte hain.", "Client request method, URL, headers, body bhejta hai; server status, headers, body return karta hai. HTTPS TLS encryption add karta hai.", "import requests\nresponse = requests.get('https://example.com')\nprint(response.status_code)", { types: ["GET", "POST", "PUT/PATCH", "DELETE", "HTTPS/TLS"], industry: "LLM APIs, payment gateways, web apps aur integrations HTTP use karte hain." }),
+          makeTopic("REST APIs", "REST API resources ko URLs aur HTTP methods ke through expose karta hai.", "Systems ko simple, stateless, predictable interface chahiye hota hai.", "Client endpoint call karta hai; method action define karta hai; JSON body data carry karta hai.", "import requests\n# requests.post('https://api.example.com/users', json={'name': 'Asha'})\nprint('POST /users creates user')", { types: ["Resource", "Endpoint", "Method", "Status code"], industry: "CRM, ecommerce, AI tools, auth services aur dashboards REST APIs expose karte hain." }),
+          makeTopic("WebSockets", "WebSocket persistent two-way connection provide karta hai.", "Real-time updates, chat, live dashboards aur token streaming ke liye request-response HTTP slow/awkward hota hai.", "Handshake HTTP se start hota hai, phir TCP connection open rehta hai aur frames both directions flow karte hain.", "# Conceptual only\n# websocket.send('hello')\n# message = websocket.recv()\nprint('WebSocket keeps connection open')", { types: ["Text frames", "Binary frames", "Ping/pong", "Secure wss"], industry: "Chat apps, live collaboration, trading dashboards aur streaming AI responses WebSockets use karte hain." }),
+          makeTopic("TCP/IP basics", "TCP/IP internet communication ka foundational protocol suite hai.", "Reliable data transfer, addressing aur routing samajhne ke liye TCP/IP basics important hain.", "IP packets route karta hai; TCP connection reliability, ordering aur retransmission handle karta hai.", "import socket\nprint(socket.gethostname())", { types: ["IP", "TCP", "UDP", "Ports"], industry: "Microservices, databases, APIs, load balancers aur cloud networking TCP/IP par run karte hain." }),
+          makeTopic("DNS", "DNS domain name ko IP address mein resolve karta hai.", "Hum example.com ya api.service.com use karte hain, machine ko IP chahiye.", "Resolver domain query karta hai, records fetch karta hai, cache use karta hai, phir connection IP par banta hai.", "import socket\nprint(socket.gethostbyname('example.com'))", { types: ["A record", "AAAA", "CNAME", "TXT", "MX"], industry: "Custom domains, API endpoints, email verification aur service discovery DNS use karte hain." }),
+          makeTopic("Headers", "Headers HTTP request/response ke metadata fields hote hain.", "Auth, content type, caching, user agent, rate limit, tracing headers se control hota hai.", "Headers key-value pairs ke form mein request line ke baad send hote hain.", "headers = {'Authorization': 'Bearer token', 'Content-Type': 'application/json'}\nprint(headers['Content-Type'])", { types: ["Authorization", "Content-Type", "Accept", "Cache-Control", "User-Agent"], industry: "API keys, JWT, content negotiation, observability trace IDs headers mein jaate hain." }),
+          makeTopic("Cookies", "Cookie browser mein stored small data piece hota hai jo requests ke saath send ho sakta hai.", "Web apps ko session remember karna, preferences store karna, tracking ya CSRF protection karna hota hai.", "Server Set-Cookie header bhejta hai; browser matching domain/path requests par Cookie header bhejta hai.", "cookie = {'session_id': 'abc123'}\nprint(cookie)", { types: ["Session cookie", "Persistent cookie", "HttpOnly", "Secure", "SameSite"], industry: "Login sessions, cart state, personalization aur security controls cookies use karte hain." }),
+          makeTopic("Sessions", "Session server-side user state represent karta hai.", "HTTP stateless hai; session se server user ko consecutive requests mein identify karta hai.", "Client session ID cookie bhejta hai; server session store se user data lookup karta hai.", "sessions = {'abc123': {'user': 'Asha'}}\nprint(sessions['abc123']['user'])", { types: ["Cookie-backed", "Server store", "JWT session", "Database session"], industry: "Dashboards, SaaS apps, checkout flows aur secure portals sessions use karte hain." }),
+          makeTopic("API Keys", "API key secret token hota hai jo client ko identify/authenticate karta hai.", "Service usage control, billing, quota aur access restriction ke liye API keys use hoti hain.", "Client key header/query mein bhejta hai; server key validate karke request allow/block karta hai.", "import os\napi_key = os.getenv('API_KEY')\nprint('key loaded' if api_key else 'missing')", { types: ["Public key", "Secret key", "Scoped key", "Rotated key"], industry: "Model APIs, payment APIs, maps, email services aur SaaS integrations API keys use karte hain." }),
+          makeTopic("OAuth", "OAuth delegated authorization protocol hai.", "User password share kiye bina third-party app ko limited access dena ho toh OAuth use hota hai.", "App user ko provider par redirect karta hai; authorization code milta hai; code token ke liye exchange hota hai.", "# Conceptual OAuth flow\nsteps = ['redirect user', 'receive code', 'exchange token', 'call API']\nprint(steps)", { types: ["Authorization Code", "PKCE", "Client Credentials", "Refresh Token"], industry: "Google Calendar, Slack, GitHub, Microsoft integrations OAuth use karte hain." }),
+          makeTopic("JWT", "JWT signed JSON token format hai jo claims carry karta hai.", "Stateless auth aur secure claims exchange ke liye JWT popular hai.", "Header.payload.signature base64url format hota hai. Server signature verify karta hai aur claims trust karta hai.", "token_parts = ['header', 'payload', 'signature']\nprint('.'.join(token_parts))", { types: ["Access token", "Refresh token", "ID token", "Signed JWT"], industry: "Auth systems, microservice identity, API gateways aur SSO JWT use karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "HTTP mental model", code: "request = {'method': 'GET', 'url': '/users/1'}\nresponse = {'status': 200, 'body': {'name': 'Asha'}}\nprint(response['body']['name'])", output: "Asha" },
+          { level: "Intermediate", title: "Headers and JSON payload", code: "headers = {'Authorization': 'Bearer secret'}\npayload = {'question': 'What is AI?'}\nprint(headers)\nprint(payload)", output: "{'Authorization': 'Bearer secret'}\n{'question': 'What is AI?'}" },
+          { level: "Real world", title: "Safe API key loading", code: "import os\napi_key = os.getenv('OPENAI_API_KEY')\nif not api_key:\n    raise RuntimeError('Missing OPENAI_API_KEY')\nprint('Ready to call API')", output: "Ready to call API  # when env var exists" }
+        ]
+      },
+      {
+        id: "databases",
+        no: 10,
+        title: "Databases",
+        intro: "Database structured tareeke se data store, query, update aur protect karta hai. File se aage badhkar concurrency, indexing, transactions aur querying provide karta hai.",
+        why: "Production AI apps ko users, conversations, documents, embeddings metadata, tool results, billing aur audit logs persist karne hote hain.",
+        diagram: "flowchart LR\n  App[Application] --> ORM[ORM or SQL Client]\n  ORM --> DB[(Database)]\n  DB --> Tables[Tables or Collections]\n  Tables --> Index[Index]\n  DB --> Tx[Transactions]",
+        topics: [
+          makeTopic("SQL basics", "SQL relational databases ke liye query language hai.", "Structured data tables mein store karna, filter, join, aggregate aur update karna SQL se hota hai.", "SQL engine query parse, plan, optimize aur execute karta hai; result rows return karta hai.", "query = \"SELECT name FROM users WHERE active = true\"\nprint(query)", { types: ["SELECT", "INSERT", "UPDATE", "DELETE", "DDL"], industry: "PostgreSQL, MySQL, analytics warehouses, dashboards aur SaaS backends SQL use karte hain." }),
+          makeTopic("NoSQL basics", "NoSQL non-relational databases ka umbrella term hai.", "Flexible schema, high-scale key-value, document, graph ya column storage ke liye NoSQL useful hai.", "Database model ke according data document, key-value, column family ya graph edges mein store hota hai.", "document = {'_id': 'u1', 'name': 'Asha', 'tags': ['ai']}\nprint(document['tags'])", { types: ["Document", "Key-value", "Column", "Graph"], industry: "MongoDB, Redis, DynamoDB, Neo4j different NoSQL needs solve karte hain." }),
+          makeTopic("CRUD operations", "CRUD means Create, Read, Update, Delete.", "Almost har app data lifecycle manage karta hai: new record, view, modify, remove.", "Application request database command mein convert hota hai; DB constraints/indexes check karke operation apply karta hai.", "store = {}\nstore[1] = {'name': 'Asha'}      # Create\nprint(store[1])                  # Read\nstore[1]['name'] = 'Ravi'        # Update\ndel store[1]                     # Delete", { types: ["Create", "Read", "Update", "Delete"], industry: "User profiles, documents, messages, invoices aur tasks CRUD operations use karte hain." }),
+          makeTopic("Joins", "Join multiple tables ko related keys ke through combine karta hai.", "Normalized data separate tables mein hota hai; useful answer ke liye combine karna padta hai.", "DB matching keys use karke row combinations create karta hai; join algorithm nested loop, hash ya merge ho sakta hai.", "sql = \"SELECT users.name, orders.total FROM users JOIN orders ON users.id = orders.user_id\"\nprint(sql)", { types: ["INNER JOIN", "LEFT JOIN", "RIGHT JOIN", "FULL JOIN"], industry: "Customer orders, user subscriptions, document owners aur analytics reports joins use karte hain." }),
+          makeTopic("Transactions", "Transaction operations ka group hai jo all-or-nothing execute hota hai.", "Money transfer, inventory update, booking aur critical state changes partial fail nahi hone chahiye.", "ACID properties ensure karti hain: Atomicity, Consistency, Isolation, Durability.", "balance_a = 100\nbalance_b = 50\n# transaction idea: debit and credit together\nbalance_a -= 10\nbalance_b += 10\nprint(balance_a, balance_b)", { types: ["BEGIN", "COMMIT", "ROLLBACK", "Isolation levels"], industry: "Payments, bookings, billing, credits, token quota aur order processing transactions use karte hain." }),
+          makeTopic("Indexing", "Index database lookup fast karne wala auxiliary data structure hai.", "Without index DB many rows scan kar sakta hai. Index query latency drastically reduce karta hai.", "Index key values ko searchable structure, usually B-tree/hash, mein store karta hai with pointers to rows.", "sql = \"CREATE INDEX idx_users_email ON users(email)\"\nprint(sql)", { types: ["B-tree index", "Hash index", "Composite index", "Full-text index"], industry: "Login by email, search filters, foreign keys aur time-series queries indexes use karte hain." }),
+          makeTopic("ORM basics", "ORM objects/classes ko database tables se map karta hai.", "Developers Python/JS objects ke through DB work kar sakein bina raw SQL everywhere likhe.", "ORM query builder SQL generate karta hai, rows ko objects mein hydrate karta hai, changes track kar sakta hai.", "class User:\n    def __init__(self, name):\n        self.name = name\n# ORM would map User object to users table\nprint(User('Asha').name)", { types: ["Active Record", "Data Mapper", "Query Builder", "Migration tool"], industry: "Django ORM, SQLAlchemy, Prisma, Hibernate production apps mein common hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "CRUD with dict", code: "db = {}\ndb[1] = {'name': 'Asha'}\nprint(db[1])\ndb[1]['name'] = 'Ravi'\nprint(db[1])", output: "{'name': 'Asha'}\n{'name': 'Ravi'}" },
+          { level: "Intermediate", title: "SQL query thinking", code: "table = [\n    {'name': 'Asha', 'active': True},\n    {'name': 'Ravi', 'active': False}\n]\nprint([row['name'] for row in table if row['active']])", output: "['Asha']" },
+          { level: "Real world", title: "Transaction mental model", code: "def transfer(a, b, amount):\n    if a['balance'] < amount:\n        raise ValueError('insufficient')\n    a['balance'] -= amount\n    b['balance'] += amount\n    return a, b", output: "In real DB wrap this in BEGIN/COMMIT transaction" }
+        ]
+      },
+      {
+        id: "async-programming",
+        no: 11,
+        title: "Async Programming",
+        intro: "Async programming ka goal waiting time ko useful banana hai. Jab program network/file/timer ka wait kar raha ho, tab doosra kaam run ho sakta hai.",
+        why: "AI apps model APIs, vector DB, tools, files aur network calls ka wait karte hain. Async se latency aur throughput improve hota hai.",
+        diagram: "flowchart LR\n  TaskA[Task A waits for API] --> EventLoop[Event Loop]\n  EventLoop --> TaskB[Run Task B]\n  TaskB --> EventLoop\n  EventLoop --> TaskAResume[Resume Task A]\n  CPU[CPU Work] --> Process[Processes for Parallelism]",
+        topics: [
+          makeTopic("Threads", "Thread same process ke andar lightweight execution path hota hai.", "I/O wait overlap karne aur background tasks chalane ke liye threads useful hain.", "Threads memory share karte hain; scheduler context switch karta hai. Python GIL CPU-bound true parallelism limit karta hai.", "import threading\n\ndef work():\n    print('worker running')\nthread = threading.Thread(target=work)\nthread.start()\nthread.join()", { types: ["Main thread", "Worker thread", "Daemon thread", "Thread pool"], industry: "Background I/O, UI responsiveness, API calls aur file processing threads use kar sakte hain." }),
+          makeTopic("Processes", "Process independent program instance hota hai with separate memory.", "CPU-bound work ko true parallel run karna ho toh processes useful hote hain.", "OS separate address space allocate karta hai; inter-process communication explicitly hota hai.", "from multiprocessing import Process\n\ndef work():\n    print('process running')\np = Process(target=work)\np.start(); p.join()", { types: ["Parent process", "Child process", "Process pool", "Worker process"], industry: "Data preprocessing, image processing, CPU-heavy analytics aur model workers processes use karte hain." }),
+          makeTopic("Async/Await", "async/await cooperative concurrency syntax hai.", "Many I/O tasks ko without many threads manage karna clean hota hai.", "async function coroutine return karta hai; await control event loop ko yield karta hai jab operation pending hai.", "import asyncio\nasync def main():\n    await asyncio.sleep(0.1)\n    print('done')\nasyncio.run(main())", { types: ["Coroutine", "await", "task", "gather"], industry: "FastAPI async routes, model API calls, database clients aur streaming responses async use karte hain." }),
+          makeTopic("Event loops", "Event loop async tasks schedule aur resume karta hai.", "Single thread mein many waiting operations manage karna event loop ka core kaam hai.", "Loop ready callbacks/coroutines run karta hai; pending I/O complete hone par task resume hota hai.", "import asyncio\nloop = asyncio.new_event_loop()\nprint(type(loop).__name__)\nloop.close()", { types: ["Task queue", "Callback queue", "I/O selector", "Microtask idea"], industry: "Node.js, browsers, Python asyncio, WebSocket servers event loops par depend karte hain." }),
+          makeTopic("Concurrency vs Parallelism", "Concurrency means tasks overlap in progress; parallelism means tasks actually same time execute hote hain.", "Right model choose karna performance ke liye critical hai. I/O-bound tasks concurrency se improve hote hain; CPU-bound tasks parallelism se.", "Concurrency scheduling problem hai; parallelism hardware cores use karta hai.", "concepts = {'concurrency': 'dealing with many tasks', 'parallelism': 'doing many tasks at once'}\nprint(concepts)", { types: ["I/O-bound concurrency", "CPU-bound parallelism", "Cooperative", "Preemptive"], industry: "LLM API fan-out concurrent ho sakta hai; image processing parallel process pool mein better hota hai." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Sequential wait", code: "import time\nstart = time.time()\ntime.sleep(0.1)\ntime.sleep(0.1)\nprint(round(time.time() - start, 2))", output: "0.2 approx" },
+          { level: "Intermediate", title: "Async gather", code: "import asyncio\nasync def fetch(name):\n    await asyncio.sleep(0.1)\n    return name\nasync def main():\n    print(await asyncio.gather(fetch('a'), fetch('b')))\nasyncio.run(main())", output: "['a', 'b']" },
+          { level: "Real world", title: "Concurrent tool calls", code: "async def call_tool(tool, query):\n    return await tool.run(query)\n# In production: await asyncio.gather(*tool_calls)\nprint('Run independent tools concurrently')", output: "Run independent tools concurrently" }
+        ]
+      },
+      {
+        id: "development-tools",
+        no: 12,
+        title: "Development Tools",
+        intro: "Tools developer ke workflow ko faster, safer aur repeatable banate hain. Production engineer sirf code nahi likhta, environment, tests, versions, containers aur collaboration bhi manage karta hai.",
+        why: "AI agent projects multiple packages, secrets, notebooks, APIs, repos, Docker services aur deployment pipelines use karte hain.",
+        diagram: "flowchart LR\n  Editor[VS Code] --> Terminal[Terminal]\n  Terminal --> Env[Virtual Env]\n  Env --> Packages[pip/npm]\n  Packages --> Git[Git/GitHub]\n  Git --> Docker[Docker]\n  Docker --> Test[Postman/Jupyter/Test]",
+        topics: [
+          makeTopic("VS Code", "VS Code popular code editor hai with extensions, debugging, terminal aur Git integration.", "Readable editing, navigation, linting, formatting, debugging aur productivity ke liye IDE/editor chahiye.", "Language servers code intelligence provide karte hain; extensions editor capabilities expand karte hain.", "print('Open folder in VS Code and run this file')", { types: ["Editor", "Extensions", "Debugger", "Integrated terminal"], industry: "Most engineering teams VS Code ya JetBrains tools use karte hain for daily development." }),
+          makeTopic("Terminal", "Terminal command-line interface hai jahan commands run hoti hain.", "Tools, scripts, Git, package managers, servers aur deployment commands terminal se run hote hain.", "Shell command parse karta hai, process start karta hai, stdout/stderr display karta hai.", "python --version\npip --version", { types: ["PowerShell", "bash", "zsh", "cmd"], industry: "Builds, tests, logs, SSH, Docker, Git workflows terminal dependent hain." }),
+          makeTopic("Docker basics", "Docker app aur dependencies ko container image mein package karta hai.", "Environment mismatch solve hota hai: mere machine par works, server par fails issue reduce hota hai.", "Image filesystem layers contain karti hai; container isolated process ke form mein run hota hai.", "docker --version\n# Dockerfile -> image -> container", { types: ["Image", "Container", "Dockerfile", "Volume", "Network"], industry: "Databases, APIs, workers, deployment aur reproducible dev environments Docker use karte hain." }),
+          makeTopic("Postman", "Postman API testing aur exploration tool hai.", "API request manually build, test, save aur share karne ke liye GUI helpful hoti hai.", "Postman method, URL, headers, body bhejta hai aur response inspect karne deta hai.", "print('Use Postman to send GET/POST requests and inspect JSON response')", { types: ["Collections", "Environments", "Tests", "Auth helpers"], industry: "Backend teams APIs debug, document aur validate karne ke liye Postman use karte hain." }),
+          makeTopic("Jupyter Notebook", "Jupyter Notebook code, text, output aur charts ko cells mein combine karta hai.", "Exploration, data analysis, ML experiments aur teaching ke liye notebooks excellent hain.", "Kernel code execute karta hai; notebook UI cell inputs/outputs store karta hai.", "x = [1, 2, 3]\nprint(sum(x))", { types: ["Code cell", "Markdown cell", "Kernel", "Notebook checkpoint"], industry: "Data science, ML prototyping, EDA aur research workflows notebooks use karte hain." }),
+          makeTopic("Git and GitHub", "Git version control system hai; GitHub remote collaboration platform hai.", "Changes track karna, rollback, branches, collaboration, code review aur release management ke liye version control mandatory hai.", "Git snapshots commits mein store karta hai; branches pointers hote hain; remote push/pull sync karta hai.", "git init\ngit add .\ngit commit -m \"first commit\"", { types: ["Commit", "Branch", "Merge", "Pull request", "Remote"], industry: "Almost every professional software team Git/GitHub/GitLab use karti hai." }),
+          makeTopic("pip / npm", "pip Python package manager hai; npm JavaScript package manager hai.", "External libraries install, update aur manage karne ke liye package manager chahiye.", "Package manager registry se package download karta hai, dependencies resolve karta hai, lock/version metadata maintain karta hai.", "pip install requests\nnpm install axios", { types: ["Install", "Upgrade", "requirements.txt", "package.json", "lockfile"], industry: "AI projects packages like numpy, pandas, fastapi, langchain, react, vite use karte hain." }),
+          makeTopic("Virtual environments", "Virtual environment project-specific isolated Python packages rakhta hai.", "Global Python pollution avoid hota hai; har project apni dependency versions use kar sakta hai.", "venv separate site-packages folder banata hai; activation PATH point kar deta hai.", "python -m venv .venv\n.venv\\Scripts\\activate\npip install requests", { types: ["venv", "conda", "poetry env", "pipenv"], industry: "Reproducible AI experiments, backend services aur deployment builds virtual envs use karte hain." })
+        ],
+        labs: [
+          { level: "Beginner", title: "Create project folder", code: "mkdir ai-agent-foundations\ncd ai-agent-foundations\npython --version", output: "Python version printed" },
+          { level: "Intermediate", title: "Virtual environment flow", code: "python -m venv .venv\n.venv\\Scripts\\activate\npip install requests\npip freeze > requirements.txt", output: "requirements.txt contains installed packages" },
+          { level: "Real world", title: "Git workflow", code: "git checkout -b feature/expense-tracker\ngit status\ngit add .\ngit commit -m \"build expense tracker\"\ngit push origin feature/expense-tracker", output: "Feature branch pushed for review" }
+        ]
+      }
+    ];
+
+    const glossary = [
+      ["Algorithm", "Problem solve karne ke ordered steps."],
+      ["Runtime", "Woh environment jahan program actually execute hota hai."],
+      ["Memory", "Temporary storage jahan variables, objects aur stack frames live karte hain."],
+      ["API", "Systems ke beech communication contract."],
+      ["State", "Program ki current remembered information."],
+      ["Bug", "Expected aur actual behavior ke beech mismatch."],
+      ["Exception", "Runtime problem signal jo normal flow interrupt karta hai."],
+      ["Serialization", "Object ko text/binary format mein convert karna for storage/network."],
+      ["Concurrency", "Multiple tasks ko overlapping progress dena."],
+      ["Parallelism", "Multiple tasks ko same time different cores par run karna."],
+      ["Index", "Lookup fast karne wali auxiliary structure."],
+      ["Hash", "Value ko fixed-ish code mein map karne ka function used in maps/sets."],
+      ["Mutable", "Object jiska internal state change ho sakta hai."],
+      ["Immutable", "Object jisko create hone ke baad change nahi kiya ja sakta."],
+      ["Protocol", "Communication ke agreed rules."],
+      ["Container", "Isolated runtime package, commonly Docker container."],
+      ["Repository", "Git-tracked project history."],
+      ["Environment Variable", "OS-level key-value config used for secrets/settings."]
+    ];
+
+    const colors = ["gold", "teal", "rust", "indigo", "green", "purple", "blue"];
+
+    function esc(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function slug(value) {
+      return String(value).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    }
+
+    function highlightPython(code) {
+      let html = esc(code);
+      html = html.replace(/(#.*)$/gm, '<span class="cm">$1</span>');
+      html = html.replace(/(\b(?:def|class|if|else|elif|for|while|return|import|from|as|try|except|finally|raise|with|in|and|or|not|True|False|None|async|await|yield|pass|break|continue)\b)/g, '<span class="kw">$1</span>');
+      html = html.replace(/('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")/g, '<span class="str">$1</span>');
+      html = html.replace(/\b(\d+(?:\.\d+)?)\b/g, '<span class="num">$1</span>');
+      html = html.replace(/\b(print|len|range|input|int|float|str|bool|open|type|sum|sorted|set|dict|list|next|iter)\b/g, '<span class="fn">$1</span>');
+      return html;
+    }
+
+    function codeBlock(title, code, output) {
+      return `
+        <div class="code-block">
+          <div class="code-head"><span class="dot"></span><span class="dot"></span><span class="dot"></span><strong>${esc(title)}</strong><span>Python</span></div>
+          <pre><code>${highlightPython(code)}</code></pre>
+        </div>
+        <div class="output"><strong>Expected output / behavior:</strong>\n${esc(output || "Run karne par concept ka visible result milega. Exact output input aur environment par depend kar sakta hai.")}</div>
+      `;
+    }
+
+    function lineNotes(code, topicName) {
+      const lines = code.split("\n").filter(line => line.trim()).slice(0, 5);
+      return `
+        <ol class="line-notes">
+          ${lines.map((line, index) => `<li><strong>Line ${index + 1}:</strong> <code>${esc(line.trim())}</code> - ${esc(topicName)} ke context mein yeh line setup, operation, decision ya output ka role play karti hai.</li>`).join("")}
+        </ol>
+      `;
+    }
+
+    function renderFlow(topic) {
+      return `
+        <div class="mini-flow" aria-label="${esc(topic.n)} flow">
+          <div class="flow-box">Input or need</div>
+          <div class="flow-arrow">-></div>
+          <div class="flow-box">${esc(topic.n)}</div>
+          <div class="flow-arrow">-></div>
+          <div class="flow-box">Output or behavior</div>
+        </div>
+      `;
+    }
+
+    function topicCard(topic, chapter, topicIndex) {
+      const id = `${chapter.id}-${slug(topic.n)}`;
+      const typeList = topic.types || ["Basic form", "Advanced form", "Production form"];
+      const analogy = topic.analogy || `${topic.n} ko ek tool ki tarah socho: galat jagah use karoge toh code complicated hoga, sahi jagah use karoge toh solution natural lagega.`;
+      const industry = topic.industry || `${topic.n} production apps mein reliability, readability, automation ya scale ke liye use hota hai.`;
+      const mistake = topic.mistake || `Common mistake: ${topic.n} ko syntax ke roop mein yaad karna but uska data-flow aur failure case ignore kar dena.`;
+      const best = topic.best || `Best practice: ${topic.n} use karte waqt names clear rakho, edge cases test karo, aur intent ko code structure se readable banao.`;
+      const internal = topic.internal || `Internally ${topic.n} source code, runtime memory, operating system resource ya network layer ke kisi concrete mechanism se execute hota hai. High-level idea eventually small machine steps mein convert hota hai.`;
+      const summary = `${topic.n} ka core point: ${topic.w} Isko tab use karo jab need ho: ${topic.y}`;
+      const exercise = topic.exercise || `${topic.n} ka ek tiny program likho, phir ek wrong input do, phir explain karo ki output ya error kyu aaya.`;
+      return `
+        <article class="topic-card" id="${id}">
+          <div class="topic-title">
+            <h3>${esc(topic.n)}</h3>
+            <span class="topic-chip">Topic ${chapter.no}.${topicIndex + 1}</span>
+          </div>
+          <div class="lens-grid">
+            <div class="lens"><h4>1. What is it?</h4><p>${esc(topic.w)}</p></div>
+            <div class="lens"><h4>2. Why do we need it?</h4><p>${esc(topic.y)}</p></div>
+            <div class="lens"><h4>3. How does it work?</h4><p>${esc(topic.h)}</p></div>
+            <div class="lens"><h4>4. Internal working</h4><p>${esc(internal)}</p></div>
+            <div class="lens"><h4>5. Types</h4><ul>${typeList.map(type => `<li>${esc(type)}</li>`).join("")}</ul></div>
+            <div class="lens"><h4>6. Step-by-step explanation</h4><ol><li>Input ya context identify karo.</li><li>${esc(topic.n)} ka rule apply karo.</li><li>Output observe karo.</li><li>Edge case test karo.</li></ol></div>
+            <div class="lens"><h4>7. Real-world examples</h4><p>${esc(topic.ex || analogy)}</p></div>
+            <div class="lens"><h4>8. Industry use cases</h4><p>${esc(industry)}</p></div>
+            <div class="lens"><h4>9. Beginner intuition</h4><p>${esc(analogy)}</p></div>
+            <div class="lens"><h4>10. Common mistakes</h4><p>${esc(mistake)}</p></div>
+            <div class="lens"><h4>11. Interview questions</h4><p><strong>Q:</strong> ${esc(topic.n)} kya hai, kab use karte hain, aur production mistake kya hoti hai?<br><strong>A:</strong> ${esc(topic.w)} ${esc(best)}</p></div>
+            <div class="lens"><h4>12. Best practices</h4><p>${esc(best)}</p></div>
+            <div class="lens full"><h4>13. Code examples</h4>${codeBlock(topic.n + " demo", topic.code || `concept = "${topic.n}"\nprint(concept)`, topic.output)}${lineNotes(topic.code || `concept = "${topic.n}"\nprint(concept)`, topic.n)}</div>
+            <div class="lens full"><h4>14. Diagrams</h4>${renderFlow(topic)}</div>
+            <div class="lens full"><h4>15. Flowcharts</h4><div class="mermaid">flowchart LR
+  A[Need] --> B[${esc(topic.n).replace(/[^a-zA-Z0-9 ]/g, " ")}]
+  B --> C[Result]
+  C --> D[Test Edge Cases]</div></div>
+            <div class="lens full"><h4>16. Tables</h4>
+              <table class="mini-table">
+                <thead><tr><th>Angle</th><th>Beginner View</th><th>Production View</th></tr></thead>
+                <tbody>
+                  <tr><td>Purpose</td><td>${esc(topic.w)}</td><td>${esc(industry)}</td></tr>
+                  <tr><td>Risk</td><td>${esc(mistake)}</td><td>Monitoring, tests aur clear naming se risk reduce hota hai.</td></tr>
+                  <tr><td>AI agent relevance</td><td>Foundation concept</td><td>Agents ke tools, memory, APIs aur workflows mein directly ya indirectly use hota hai.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lens"><h4>17. Summary</h4><p>${esc(summary)}</p></div>
+            <div class="lens"><h4>18. Mini exercises</h4><p>${esc(exercise)}</p></div>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderChapter(chapter) {
+      const color = colors[(chapter.no - 1) % colors.length];
+      const labHtml = chapter.labs.map(lab => `
+        <div>
+          <span class="level-label">${esc(lab.level)}</span>
+          <h3>${esc(lab.title)}</h3>
+          ${codeBlock(lab.title, lab.code, lab.output)}
+          ${lineNotes(lab.code, lab.title)}
+        </div>
+      `).join("");
+      return `
+        <section class="page" id="${chapter.id}">
+          <div class="chapter-head">
+            <div class="chapter-num">${chapter.no}</div>
+            <div>
+              <h2>${esc(chapter.title)}</h2>
+              <p>${esc(chapter.intro)}</p>
+            </div>
+          </div>
+          <div class="banner">
+            <h3>Why this chapter matters for AI agent engineering</h3>
+            <p>${esc(chapter.why)}</p>
+          </div>
+          <div class="mermaid-wrap">
+            <p class="diagram-title">Chapter architecture diagram</p>
+            <div class="mermaid">${esc(chapter.diagram)}</div>
+          </div>
+          <div class="chapter-tools">
+            <div class="tool-card"><h3>How to study this chapter</h3><p>Pehle topic ka what/why padho, phir internal working samjho, phir code run karo. Agar output unexpected aaye toh debugging section ke pattern se reason find karo.</p></div>
+            <div class="tool-card"><h3>When to use next time</h3><p>Jab aap code design kar rahe ho aur confusion ho, toh chapter ke concepts ko checklist ki tarah use karo: data type, control flow, error, storage, network, performance.</p></div>
+          </div>
+          ${chapter.topics.map((topic, index) => topicCard(topic, chapter, index)).join("")}
+          <div class="exercise-panel">
+            <h3>${esc(chapter.title)} - Chapter Code Lab</h3>
+            <div class="lab-grid">${labHtml}</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderTOC() {
+      const cards = chapters.map(ch => `
+        <a class="toc-card" href="#${ch.id}">
+          <strong>${ch.no}. ${esc(ch.title)}</strong>
+          <span>${ch.topics.length} topics - ${esc(ch.intro)}</span>
+        </a>
+      `).join("");
+      document.getElementById("tocCards").innerHTML = cards;
+      document.getElementById("tocDrawerLinks").innerHTML = `
+        <a href="#cover">Cover</a>
+        <a href="#table-of-contents">Table of Contents</a>
+        <a href="#thinking-framework">Thinking Framework</a>
+        ${chapters.map(ch => `
+          <a class="toc-chapter" href="#${ch.id}">Chapter ${ch.no}</a>
+          <a href="#${ch.id}">${esc(ch.title)}</a>
+          ${ch.topics.map(topic => `<a href="#${ch.id}-${slug(topic.n)}">${esc(topic.n)}</a>`).join("")}
+        `).join("")}
+        <a class="toc-chapter" href="#glossary">Glossary</a>
+      `;
+    }
+
+    function renderGlossary() {
+      document.getElementById("glossaryGrid").innerHTML = glossary.map(([term, meaning]) => `
+        <div class="glossary-card"><strong>${esc(term)}</strong><span>${esc(meaning)}</span></div>
+      `).join("");
+    }
+
+    function initProgress() {
+      const fill = document.getElementById("progressFill");
+      const update = () => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const percent = max <= 0 ? 0 : (window.scrollY / max) * 100;
+        fill.style.width = `${Math.min(100, Math.max(0, percent))}%`;
+      };
+      window.addEventListener("scroll", update, { passive: true });
+      update();
+    }
+
+    function initNav() {
+      const drawer = document.getElementById("tocDrawer");
+      document.getElementById("tocToggle").addEventListener("click", () => drawer.classList.toggle("open"));
+      drawer.addEventListener("click", event => {
+        if (event.target.tagName === "A") drawer.classList.remove("open");
+      });
+    }
+
+    function runMermaidWhenReady() {
+      const tryRun = () => {
+        if (window.mermaid) {
+          window.mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose" });
+          window.mermaid.run({ querySelector: ".mermaid" });
+          return true;
+        }
+        return false;
+      };
+      if (!tryRun()) {
+        setTimeout(tryRun, 800);
+      }
+    }
+
+    function renderBook() {
+      renderTOC();
+      document.getElementById("chapters").innerHTML = chapters.map(renderChapter).join("");
+      renderGlossary();
+      initProgress();
+      initNav();
+      runMermaidWhenReady();
+    }
+
+    renderBook();
+  </script>
+</body>
+</html>
