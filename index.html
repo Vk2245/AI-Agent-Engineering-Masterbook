@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Agent Engineering Masterbook - Complete Revision Atlas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Playfair+Display:wght@700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:#171717; --soft:#3a342d; --muted:#6d655b; --paper:#fffdf8; --panel:#fff8ed;
+      --line:#e2d7c7; --gold:#b87518; --teal:#176f72; --indigo:#4057a8; --rust:#b34b35;
+      --dark:#191816; --code:#141923; --shadow:0 12px 34px rgba(35,26,14,.14); --top:60px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:84px}
+    body{margin:0;color:var(--ink);background:linear-gradient(90deg,rgba(255,255,255,.55) 1px,transparent 1px 24px),linear-gradient(0deg,rgba(255,255,255,.5) 1px,transparent 1px 24px),#e9dfd1;font-family:"DM Sans",system-ui,sans-serif;font-size:14px;line-height:1.52}
+    a{color:inherit} button,input,select{font:inherit}
+    .top{position:fixed;inset:0 0 auto 0;height:var(--top);z-index:50;display:grid;grid-template-columns:auto minmax(220px,560px) auto;gap:12px;align-items:center;padding:8px 14px;color:#fff8ec;background:rgba(25,24,22,.96);box-shadow:0 6px 20px rgba(0,0,0,.24);backdrop-filter:blur(12px)}
+    .brand{display:flex;align-items:center;gap:10px;white-space:nowrap;font-family:"Playfair Display",serif;font-weight:900;font-size:18px}
+    .badge{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;color:#21170b;background:var(--gold);font:800 12px "JetBrains Mono",monospace}
+    .search{display:grid;grid-template-columns:1fr auto;gap:8px}
+    .search input,.search select{min-width:0;border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 10px;color:#fff8ec;background:rgba(255,255,255,.09);outline:0}
+    .search input::placeholder{color:rgba(255,248,236,.56)} .search option{color:#171717}
+    .actions{display:flex;gap:8px;justify-content:flex-end}
+    .btn{border:1px solid rgba(255,255,255,.18);border-radius:9px;padding:8px 11px;color:#fff8ec;background:rgba(255,255,255,.08);cursor:pointer;font-size:12px;font-weight:800}
+    .btn.primary{color:#21170b;background:var(--gold);border-color:var(--gold)}
+    .bar{position:fixed;top:var(--top);left:0;z-index:51;width:100%;height:4px;background:rgba(255,255,255,.25)} .bar span{display:block;width:0;height:100%;background:linear-gradient(90deg,var(--gold),var(--teal),var(--indigo))}
+    .wrap{display:grid;grid-template-columns:286px minmax(0,1fr);gap:18px;width:min(1500px,calc(100vw - 24px));margin:0 auto;padding:calc(var(--top) + 26px) 0 34px}
+    .side{position:sticky;top:calc(var(--top) + 18px);height:calc(100vh - var(--top) - 34px);overflow:auto;border-radius:14px;background:var(--dark);color:#fff8ec;box-shadow:var(--shadow)}
+    .side h2{position:sticky;top:0;z-index:2;margin:0;padding:15px;color:var(--gold);background:var(--dark);border-bottom:1px solid rgba(255,255,255,.1);font:900 22px "Playfair Display",serif}
+    .links{display:grid;gap:4px;padding:10px}.links a{display:grid;grid-template-columns:34px 1fr;gap:9px;align-items:center;padding:8px;border-radius:9px;color:rgba(255,248,236,.82);text-decoration:none;font-size:12px}.links a:hover,.links a.active{color:#fff;background:rgba(255,255,255,.08)}
+    .pno{display:grid;place-items:center;height:30px;border-radius:8px;color:#21170b;background:var(--gold);font:800 11px "JetBrains Mono",monospace}
+    .main{display:grid;gap:18px;min-width:0}
+    .hero{border-radius:18px;padding:clamp(22px,4vw,44px);color:#fff8ec;background:radial-gradient(circle at 87% 10%,rgba(184,117,24,.36),transparent 24%),radial-gradient(circle at 7% 88%,rgba(23,111,114,.22),transparent 28%),linear-gradient(135deg,#181714,#2a251f 58%,#191816);box-shadow:var(--shadow)}
+    .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:20px}.eyebrow{color:var(--gold);font-size:11px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+    h1{margin:8px 0 10px;color:#fff8ec;font:900 clamp(36px,6vw,68px)/1.08 "Playfair Display",serif}.hero p{margin:0;max-width:760px;color:rgba(255,248,236,.77);font-size:15px}
+    .repo{display:grid;gap:10px;border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:14px;background:rgba(255,255,255,.08)}.repo h2{margin:0;color:#fff8ec;font:900 23px "Playfair Display",serif}
+    .copy{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border-radius:9px;padding:9px;background:rgba(0,0,0,.22);font:12px "JetBrains Mono",monospace;color:rgba(255,248,236,.84);overflow-wrap:anywhere}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.stat,.panel,.part{border:1px solid rgba(81,65,42,.12);border-radius:16px;background:var(--paper);box-shadow:var(--shadow);overflow:hidden}
+    .stat{padding:12px}.stat strong{display:block;color:var(--gold);font:900 30px/1 "Playfair Display",serif}.stat span{display:block;margin-top:5px;color:var(--muted);font-size:11px;font-weight:900;letter-spacing:.7px;text-transform:uppercase}
+    .panel-head,.part-head{display:flex;justify-content:space-between;gap:16px;align-items:end;padding:15px 17px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#fffaf2,#eff7f7)}.panel h2,.part h2{margin:0;color:var(--ink);font:900 28px "Playfair Display",serif}.panel p,.part p{margin:4px 0 0;color:var(--muted)}
+    .overview,.revision{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px}
+    .card{display:grid;gap:8px;min-height:154px;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fffefa;text-decoration:none}.card h3{margin:0;color:var(--ink);font-size:17px}.card p{margin:0;color:var(--muted);font-size:12.5px}
+    .chip{display:inline-flex;align-items:center;border-radius:999px;padding:4px 8px;color:var(--soft);background:#f2eadc;text-decoration:none;font-size:11px;font-weight:900}.chips{display:flex;flex-wrap:wrap;gap:6px}
+    .part-head{display:grid;grid-template-columns:auto 1fr auto;align-items:center}.big{display:grid;place-items:center;width:52px;height:52px;border-radius:14px;color:#fff8ec;background:var(--dark);font:900 24px "Playfair Display",serif}.count{white-space:nowrap;border-radius:999px;padding:7px 10px;color:#fff8ec;background:var(--teal);font:11px "JetBrains Mono",monospace}
+    .chapnav{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);background:#fffdf8}.chapter{padding:14px;border-bottom:1px solid var(--line)}.chapter:last-child{border-bottom:0}
+    .ctitle{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start;margin-bottom:10px}.ctitle h3{margin:0;color:var(--indigo);font-size:18px}.ctitle p{margin:3px 0 0;color:var(--muted);font-size:12.5px}
+    .topics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}details.topic{border:1px solid var(--line);border-radius:11px;background:#fffefa;overflow:hidden}details.topic[open]{box-shadow:0 8px 22px rgba(32,24,12,.08)}
+    summary{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 12px;cursor:pointer;list-style:none}summary::-webkit-details-marker{display:none}summary h4{margin:0;color:var(--ink);font-size:14px}summary p{margin:3px 0 0;color:var(--muted);font-size:12px}.anchor{color:var(--gold);font:800 12px "JetBrains Mono",monospace;text-decoration:none}
+    .body{padding:0 12px 12px}.notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.note{min-height:80px;border:1px solid #eadfce;border-radius:9px;padding:9px;background:#fff7e8}.note.wide{grid-column:1/-1}.note h5{margin:0 0 5px;color:var(--gold);font-size:10.5px;letter-spacing:.7px;text-transform:uppercase}.note p,.note li{margin:0;color:var(--soft);font-size:12.2px}.note ul,.note ol{margin:0;padding-left:16px}
+    .flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:7px;align-items:center}.box{min-height:42px;display:grid;place-items:center;text-align:center;border:1px solid #cfe1e2;border-radius:8px;padding:7px;background:#eef8f7;font-size:11px;font-weight:900}.arr{color:var(--gold);font:900 12px "JetBrains Mono",monospace}
+    pre{margin:0;overflow:auto;border-radius:9px;padding:11px;color:#e7edf6;background:var(--code);font:11.5px/1.55 "JetBrains Mono",monospace}.tbl{width:100%;border-collapse:collapse;font-size:11.6px}.tbl th{padding:7px;color:#fff8ec;background:var(--dark);text-align:left}.tbl td{padding:7px;border:1px solid var(--line);color:var(--soft);vertical-align:top}
+    .hidden{display:none!important}.menu{display:none;position:fixed;right:14px;bottom:14px;z-index:60;border:0;border-radius:999px;padding:12px 14px;color:#21170b;background:var(--gold);box-shadow:0 10px 24px rgba(0,0,0,.22);font-weight:900}
+    @media(max-width:1120px){.wrap{grid-template-columns:1fr}.side{position:fixed;top:var(--top);left:0;bottom:0;z-index:55;width:min(330px,88vw);height:auto;border-radius:0 14px 14px 0;transform:translateX(-105%);transition:.22s}.side.open{transform:translateX(0)}.menu{display:block}.overview,.revision{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){:root{--top:112px}.top{height:var(--top);grid-template-columns:1fr;align-items:stretch}.brand{justify-content:space-between}.search{grid-template-columns:1fr}.actions .btn{flex:1}.hero-grid,.overview,.revision,.topics,.notes,.stats{grid-template-columns:1fr}.part-head{grid-template-columns:auto 1fr}.count{grid-column:1/-1;justify-self:start}.flow{grid-template-columns:1fr}.arr{transform:rotate(90deg);text-align:center}}
+    @media print{body{background:#fff;font-size:11px}.top,.bar,.side,.menu{display:none!important}.wrap{display:block;width:100%;padding:0}.main{display:block}.hero,.panel,.part{box-shadow:none;border:0;border-radius:0;page-break-after:always}details.topic:not([open]) .body{display:grid}.topics,.notes{grid-template-columns:1fr 1fr}.topic,.chapter,.note,pre{break-inside:avoid;page-break-inside:avoid}@page{size:A4;margin:.3in}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="brand"><span class="badge">AI</span><span>Agent Engineering Masterbook</span></div>
+    <div class="search"><input id="search" type="search" placeholder="Search topic, part, framework..."><select id="jump"><option value="">Jump to topic</option></select></div>
+    <div class="actions"><button class="btn" id="expand" type="button">Expand all</button><button class="btn primary" onclick="window.print()" type="button">Download PDF</button></div>
+  </header>
+  <div class="bar"><span id="prog"></span></div>
+  <button class="menu" id="menu" type="button">Parts</button>
+  <div class="wrap">
+    <aside class="side" id="side"><h2>All Parts</h2><nav class="links" id="links"></nav></aside>
+    <main class="main">
+      <section class="hero" id="top">
+        <div class="hero-grid">
+          <div><div class="eyebrow">Complete 15-Part Hinglish Revision Site</div><h1>AI Agent Engineering Masterbook</h1><p>Compact, responsive, topic-linked revision atlas for beginner-to-production AI agent engineering. Har topic mein what, why, how, internal working, steps, examples, use cases, mistakes, interview prompt, best practices, code, diagram, table, summary aur mini exercise included hai.</p></div>
+          <div class="repo"><h2>Project identity</h2><div class="copy"><span>Repo: ai-agent-engineering-masterbook</span><button class="btn" data-copy="ai-agent-engineering-masterbook" type="button">Copy</button></div><div class="copy"><span>Responsive Hinglish revision site for AI Agent Engineering: programming, math, ML, deep learning, LLMs, prompts, RAG, agents, deployment, safety, projects, and career notes.</span><button class="btn" data-copy="Responsive Hinglish revision site for AI Agent Engineering: programming, math, ML, deep learning, LLMs, prompts, RAG, agents, deployment, safety, projects, and career notes." type="button">Copy</button></div></div>
+        </div>
+      </section>
+      <section class="stats" id="stats"></section>
+      <section class="panel" id="overview"><div class="panel-head"><div><h2>Course Map</h2><p>Clueless ho toh pehle part choose karo, phir chapter, phir topic open karo. Think: problem -> data -> operation -> output -> failure -> production.</p></div></div><div class="overview" id="overviewGrid"></div></section>
+      <section class="panel"><div class="panel-head"><div><h2>How to Think First Time</h2><p>Unknown topic ko ratna nahi. Pehle need identify karo, phir data flow, phir code/pseudocode, phir edge cases, phir industry use.</p></div></div><div class="revision"><div class="card"><h3>1. Problem first</h3><p>Syntax se pehle yeh pucho: yeh concept kis real problem ko solve karta hai?</p></div><div class="card"><h3>2. Data flow</h3><p>Input kya hai, transformation kya hai, output kya hai, aur state kahan store hoti hai?</p></div><div class="card"><h3>3. Production view</h3><p>Slow network, bad input, high traffic, cost, security aur monitoring ko hamesha socho.</p></div></div></section>
+      <div id="parts"></div>
+      <section class="panel"><div class="panel-head"><div><h2>Final Revision Notes</h2><p>Last-day checkpoints before interviews, projects, or implementation planning.</p></div></div><div class="revision" id="rev"></div></section>
+    </main>
+  </div>
+  <script>
+const raw=`1|Programming Foundations|Code, data, control flow, APIs, databases, async, tools - agent engineering ka base.
+Programming Basics:What is programming?,Compiler vs Interpreter,Variables,Constants,Comments,Input/Output,Keywords,Arithmetic Operators,Logical Operators,Comparison Operators,Assignment Operators,Expressions,Type conversion,String formatting
+Data Types:Integer,Float,Boolean,String,List / Arrays,Tuple,Set,Dictionary / Objects,Null / None,Mutable vs Immutable
+Control Flow:if / else,Nested conditions,for loop,while loop,break,continue,pass,Iterators,Generators
+Functions:Function declaration,Parameters,Return values,Default arguments,Lambda functions,Recursion,Scope,Closures,Decorators
+Object-Oriented Programming:Classes,Objects,Constructors,Inheritance,Polymorphism,Encapsulation,Abstraction,Static methods,Magic methods
+Error Handling:try/except,finally,Custom exceptions,Debugging,Logging
+File Handling:Read/write files,CSV,JSON,XML,PDF basics,Binary files,File streaming
+Data Structures & Algorithms:Arrays,Linked lists,Stacks,Queues,Trees,Graphs,Hashmaps,Searching,Sorting,Big O notation
+APIs & Networking:HTTP/HTTPS,REST APIs,WebSockets,TCP/IP basics,DNS,Headers,Cookies,Sessions,API Keys,OAuth,JWT
+Databases:SQL basics,NoSQL basics,CRUD operations,Joins,Transactions,Indexing,ORM basics
+Async Programming:Threads,Processes,Async/Await,Event loops,Concurrency vs Parallelism
+Development Tools:VS Code,Terminal,Docker basics,Postman,Jupyter Notebook,Git & GitHub,pip / npm,Virtual environments
+---
+2|Mathematics for AI|Math data ko vectors, uncertainty, gradients aur optimization ke form mein samjhaata hai.
+Linear Algebra:Scalars,Vectors,Matrices,Tensors,Dot product,Matrix multiplication,Eigenvalues,Eigenvectors
+Probability & Statistics:Mean,Median,Mode,Variance,Standard deviation,Probability distributions,Conditional probability,Bayes theorem,Hypothesis testing
+Calculus Basics:Derivatives,Gradients,Partial derivatives,Chain rule,Optimization intuition
+---
+3|Traditional AI & Machine Learning|Classic AI aur ML data se pattern learn, validate, evaluate aur deploy karna sikhata hai.
+AI Foundations:What is AI?,AI vs ML vs Deep Learning,Rule-based systems,Expert systems,Search algorithms
+Machine Learning Basics:What is ML?,Training vs Testing,Features & Labels,Datasets,Data preprocessing
+Supervised Learning:Regression,Classification,Linear Regression,Logistic Regression,Decision Trees,Random Forest,SVM,KNN,Naive Bayes
+Unsupervised Learning:Clustering,Dimensionality reduction,Pattern discovery,K-Means,DBSCAN,PCA,Hierarchical clustering
+Reinforcement Learning:Agent,Environment,Rewards,Policies,Q-learning,Exploration vs Exploitation
+ML Workflow:Data collection,Data cleaning,Feature engineering,Model training,Validation,Testing,Deployment
+Overfitting & Underfitting:Bias vs variance,Regularization,Cross-validation
+Evaluation Metrics:Accuracy,Precision,Recall,F1 Score,ROC-AUC,Confusion matrix
+---
+4|Deep Learning|Neural networks representation learning karte hain for images, text, sequences and patterns.
+Neural Networks:Neurons,Layers,Activation functions,Forward propagation,Backpropagation,Loss functions
+Deep Learning Architectures:ANN,CNN,RNN,LSTM,GRU
+Model Training:Epochs,Batch size,Optimizers,Learning rate,Gradient descent
+Frameworks:PyTorch,TensorFlow,Keras
+---
+5|Generative AI & LLMs|LLMs tokens, embeddings, context, sampling aur tuning ke through text/code generate karte hain.
+NLP Foundations:Tokenization,Stemming,Lemmatization,POS tagging,Named Entity Recognition
+Transformers:Attention mechanism,Self-attention,Multi-head attention,Encoder,Decoder,Positional encoding
+LLM Concepts:Tokens,Embeddings,Context window,Hallucinations,Temperature,Top-k,Top-p,Sampling
+Advanced LLM Topics:MoE,Quantization,Fine-tuning,Instruction tuning,RLHF,Distillation,LoRA,PEFT
+Popular Models:OpenAI GPT,Meta Llama,Google Gemini,Anthropic Claude,Mistral AI Mistral
+---
+6|Prompt Engineering|Prompting model ko clear instruction, context, examples, format aur guardrails deta hai.
+Prompt Basics:Instruction prompts,Role prompts,Context prompts,Delimiters
+Prompting Techniques:Zero-shot,One-shot,Few-shot,Chain of Thought,Self-consistency,ReAct,Tree of Thought
+Structured Prompting:XML prompts,JSON prompts,YAML prompts,Markdown prompts
+Advanced Prompting:Prompt chaining,Dynamic prompts,Reflection prompting,System prompts,Agent prompts
+Prompt Security:Prompt injection,Jailbreaks,Prompt leaking,Guardrails
+---
+7|RAG & Vector Databases|RAG model ko external knowledge se ground karta hai using retrieval, chunks and embeddings.
+RAG Basics:What is RAG?,Why RAG?,RAG architecture
+Embeddings:Vector embeddings,Similarity search,Cosine similarity
+Vector Databases:Pinecone,Weaviate,Milvus,ChromaDB,FAISS
+Chunking:Fixed chunking,Semantic chunking,Recursive chunking,Sliding window chunking
+Retrieval Techniques:Dense retrieval,Sparse retrieval,Hybrid search,Re-ranking
+Advanced RAG:Graph RAG,Agentic RAG,Multi-hop RAG,Corrective RAG,Adaptive RAG
+---
+8|AI Agents|Agents LLM brain ko memory, planning, tools, reflection aur execution loop ke saath action system banate hain.
+AI Agent Basics:Reactive agents,Autonomous agents,Goal-driven agents
+Agent Components:Brain (LLM),Memory,Planning,Tools,Reflection,Execution engine
+Agent Types:Chat agents,Workflow agents,Research agents,Coding agents
+Agent Design Patterns:ReAct,Plan-and-Execute,Reflection,Router agents,Toolformer
+Agent Memory:Short-term memory,Long-term memory,Episodic memory,Semantic memory
+MCP (Model Context Protocol):MCP basics,MCP servers,MCP clients,Tool discovery,Resource sharing
+---
+9|Agent Frameworks|Frameworks agents, tools, memory, retrieval and orchestration ko abstractions mein organize karte hain.
+Frameworks:LangChain,LangGraph,LlamaIndex,CrewAI,AutoGen,Semantic Kernel,Haystack
+Concepts:Chains,Agents,Memory,Tools,Query engines,Multi-agent orchestration
+---
+10|Multi-Agent Systems|Multiple agents collaboration, delegation, negotiation aur shared memory se complex work divide karte hain.
+Basics:Collaborative agents,Competitive agents,Distributed systems
+Communication:Message passing,Shared memory,Event-driven systems
+Coordination:Delegation,Negotiation,Consensus
+Architectures:Centralized,Decentralized,Hierarchical
+Advanced Topics:Swarm intelligence,Human-in-the-loop,A2A protocols,Agent handoffs
+---
+11|Context Engineering|Context engineering right information ko right order, size and priority mein model ko dena hai.
+Context Management:Token budgeting,Context pruning,Context prioritization,Context caching
+Memory Optimization:Compression,Summarization,Retrieval memory,Persistent memory
+Long Context Handling:Sliding windows,Hierarchical memory,Attention optimization
+---
+12|Evaluation & Observability|Production AI ko measure, test, trace, monitor and improve karna zaroori hai.
+Evaluation:Human evaluation,Automated evaluation,LLM-as-a-judge,Benchmarking
+Metrics:Accuracy,Hallucination rate,Latency,Cost,Tool success rate
+Observability:Logs,Traces,Monitoring,Telemetry,Token tracking
+Testing:Unit testing,Integration testing,Stress testing,Adversarial testing
+Tools:LangSmith,Helicone,Phoenix,Weights & Biases
+---
+13|Production & Deployment|Reliable backend, secure APIs, cloud deployment, DevOps, scaling, monitoring and cost control.
+Backend Deployment:FastAPI,Flask,Node.js,Serverless
+Cloud Platforms:Amazon Web Services,Microsoft Azure,Google Cloud,IBM Cloud
+DevOps:Docker,Kubernetes,CI/CD,GitHub Actions
+Scalability:Load balancing,Caching,Horizontal scaling,Queue systems
+Security:API security,Encryption,Secret management,Access control
+Cost Optimization:Model routing,Quantization,Batch inference,GPU optimization
+---
+14|Advanced AI Agent Topics|Advanced agents planning, tool execution, browser control, safety and multimodal workflows use karte hain.
+Agentic Workflows:Autonomous planning,Recursive agents,Self-improving agents
+Tool Use:Browser automation,Code execution,Computer use agents
+AI Safety:Alignment,Hallucination reduction,Guardrails,Ethical AI
+Emerging Topics:AI Operating Systems,AI Browsers,AI-native apps,Voice agents,Vision agents,Multimodal agents,Robotics agents
+---
+15|Projects & Career|Projects learning ko proof mein convert karte hain; career needs product thinking and communication.
+Beginner Projects:Chatbot,PDF Q&A bot,AI summarizer,AI translator
+Intermediate Projects:RAG chatbot,Research assistant,Email agent,AI coding assistant
+Advanced Projects:Multi-agent systems,Autonomous workflow agents,AI SaaS products,AI IDE assistants
+Soft Skills:Problem solving,System design,Debugging,Communication,Technical writing,Product thinking
+Career Outcomes:AI Engineer,GenAI Engineer,AI Agent Developer,LLM Engineer,RAG Engineer,AI Product Builder`;
+const rev=[["Programming","Code = input -> transform -> output. Types, functions, errors, files, APIs and DBs are production base."],["Math","Vectors represent data, probability handles uncertainty, calculus optimizes, statistics evaluates."],["ML","ML learns patterns from data. Train/test, features, metrics and overfitting are non-negotiable."],["LLMs","Tokens, embeddings, context, sampling and hallucinations explain model behavior."],["Prompting","Prompt = instruction + context + examples + output format + guardrails."],["RAG","RAG = chunk -> embed -> retrieve -> rerank -> generate with grounded knowledge."],["Agents","Agent = LLM brain + tools + memory + planning + execution loop."],["Production","Deployable AI needs security, cost control, scaling, observability and evals."]];
+const esc=x=>String(x??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+const slug=x=>String(x).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+function parse(){return raw.split("\n---\n").map(block=>{const lines=block.trim().split("\n");const [no,title,goal]=lines[0].split("|");return{no:+no,title,goal,chapters:lines.slice(1).map(line=>{const i=line.indexOf(":");return{title:line.slice(0,i),topics:line.slice(i+1).split(",").map(x=>x.trim())}})}})}
+const parts=parse();
+const all=()=>parts.flatMap(p=>p.chapters.flatMap((c,ci)=>c.topics.map((t,ti)=>({p,c,ci:ci+1,t,ti:ti+1,id:`p${p.no}-${slug(c.title)}-${slug(t)}`}))));
+function kind(x){const s=x.t.toLowerCase();if(/api|http|oauth|jwt|websocket|dns|headers|cookies|session/.test(s))return"network/API concept";if(/sql|nosql|crud|join|transaction|index|orm|database/.test(s))return"data persistence concept";if(/prompt|rag|embedding|retrieval|chunk|agent|memory|tool|mcp|context/.test(s))return"AI agent system concept";if(/mean|variance|matrix|vector|gradient|derivative|probability|bayes|tensor/.test(s))return"math concept";if(/model|training|regression|classification|cnn|rnn|lstm|transformer|attention|llm/.test(s))return"modeling concept";if(x.p.no>=13)return"production concept";return`${x.c.title} concept`}
+function code(x){const t=x.t.replace(/"/g,'\\"');if(x.p.no<=1)return`# ${t} demo\nconcept = "${t}"\nprint("Learn:", concept)\nprint("Test edge cases before production.")`;if(x.p.no<=4)return`# ${t} numeric intuition\nvalues = [2, 4, 6, 8]\nscore = sum(values) / len(values)\nprint("${t}", score)`;if(x.p.no<=8)return`# ${t} AI workflow idea\nstate = {"topic": "${t}", "ready": True}\nprint(state)`;if(x.p.no<=12)return`# ${t} system note\nrecord = {"concept": "${t}", "metric": "track", "risk": "monitor"}\nprint(record)`;return`# ${t} production checklist\nchecks = ["secure", "logged", "tested", "scalable"]\nprint("${t}", checks)`}
+function explain(x){const k=kind(x);return{what:`${x.t} ek ${k} hai jo ${x.c.title} ke andar important building block ki tarah kaam karta hai.`,why:`Iski need tab hoti hai jab ${x.p.title} mein reliable, repeatable aur scalable system design karna ho.`,how:`Yeh input/context leta hai, rule ya pattern apply karta hai, aur output, decision, metric, memory update ya action produce karta hai.`,internal:`Internally representation, operation, runtime cost, failure mode aur monitoring layers hoti hain. ${x.t} ko bhi isi stack se samjho.`,example:`Real-world example: AI assistant app mein ${x.t} request ko understand, validate, retrieve, plan, execute, evaluate, secure ya deploy karne mein help karta hai.`,industry:`Industry use: copilots, RAG bots, enterprise automation, SaaS AI tools, cloud services, observability and secure workflows.`,mistake:`Common mistake: ${x.t} ki definition yaad karna but input format, edge cases, latency, cost, safety ya monitoring ignore karna.`,best:`Best practice: tiny example banao, edge cases test karo, logs/metrics socho, aur naming/documentation clear rakho.`}}
+function topic(x){const e=explain(x);const s=`${x.p.title} ${x.c.title} ${x.t} ${Object.values(e).join(" ")}`.toLowerCase();return`<details class="topic" id="${x.id}" data-search="${esc(s)}"><summary><div><h4>${esc(x.t)}</h4><p>${esc(x.c.title)} - Part ${x.p.no}</p></div><a class="anchor" href="#${x.id}">#</a></summary><div class="body"><div class="notes">
+<div class="note"><h5>1. What is it?</h5><p>${esc(e.what)}</p></div><div class="note"><h5>2. Why do we need it?</h5><p>${esc(e.why)}</p></div><div class="note"><h5>3. How does it work?</h5><p>${esc(e.how)}</p></div><div class="note"><h5>4. Internal working</h5><p>${esc(e.internal)}</p></div>
+<div class="note"><h5>5. Types</h5><ul><li>Basic ${esc(x.t)}</li><li>Production ${esc(x.t)}</li><li>Edge-case aware ${esc(x.t)}</li></ul></div><div class="note"><h5>6. Step-by-step</h5><ol><li>Need identify karo.</li><li>Input/output define karo.</li><li>${esc(x.t)} apply karo.</li><li>Failure case test karo.</li></ol></div>
+<div class="note"><h5>7. Real-world examples</h5><p>${esc(e.example)}</p></div><div class="note"><h5>8. Industry use cases</h5><p>${esc(e.industry)}</p></div><div class="note"><h5>9. Beginner intuition</h5><p>Isko mental tool samjho: jab similar problem dikhe, decide karo ki yeh data organize karega, decision lega, ya action trigger karega.</p></div><div class="note"><h5>10. Common mistakes</h5><p>${esc(e.mistake)}</p></div>
+<div class="note"><h5>11. Interview question</h5><p><b>Q:</b> ${esc(x.t)} ko example and production risk ke saath explain karo.<br><b>A:</b> What + why + failure + best practice bolo.</p></div><div class="note"><h5>12. Best practices</h5><p>${esc(e.best)}</p></div>
+<div class="note wide"><h5>13. Code example</h5><pre><code>${esc(code(x))}</code></pre></div><div class="note wide"><h5>14. Diagram</h5><div class="flow"><div class="box">Input</div><div class="arr">-></div><div class="box">${esc(x.t)}</div><div class="arr">-></div><div class="box">Output / Decision</div></div></div>
+<div class="note wide"><h5>15. Flowchart</h5><div class="flow"><div class="box">Problem</div><div class="arr">-></div><div class="box">Apply concept</div><div class="arr">-></div><div class="box">Test and monitor</div></div></div><div class="note wide"><h5>16. Table</h5><table class="tbl"><tr><th>Angle</th><th>Revision note</th></tr><tr><td>Purpose</td><td>${esc(e.what)}</td></tr><tr><td>Risk</td><td>${esc(e.mistake)}</td></tr><tr><td>Use next time when</td><td>You need ${esc(x.c.title)} style decision, metric, integration, model behavior, or workflow design.</td></tr></table></div>
+<div class="note"><h5>17. Summary</h5><p>${esc(x.t)} = concept ko repeatable engineering pattern mein convert karna.</p></div><div class="note"><h5>18. Mini exercises</h5><p>One-page note banao: input, output, diagram, code/pseudocode, and interview answer.</p></div>
+</div></div></details>`}
+function part(p){const n=p.chapters.reduce((a,c)=>a+c.topics.length,0);return`<section class="part" id="part-${p.no}"><header class="part-head"><div class="big">${p.no}</div><div><h2>Part ${p.no} - ${esc(p.title)}</h2><p>${esc(p.goal)}</p></div><span class="count">${p.chapters.length} chapters / ${n} topics</span></header><nav class="chapnav">${p.chapters.map(c=>`<a class="chip" href="#p${p.no}-${slug(c.title)}">${esc(c.title)}</a>`).join("")}</nav>${p.chapters.map((c,ci)=>`<article class="chapter" id="p${p.no}-${slug(c.title)}"><div class="ctitle"><div><h3>${p.no}.${ci+1} ${esc(c.title)}</h3><p>Revise by comparing input, operation, output, failure and production use.</p></div><span class="chip">${c.topics.length} topics</span></div><div class="topics">${c.topics.map((t,ti)=>topic({p,c,ci:ci+1,t,ti:ti+1,id:`p${p.no}-${slug(c.title)}-${slug(t)}`})).join("")}</div></article>`).join("")}</section>`}
+function render(){const topics=all();stats.innerHTML=[["15","Parts"],[parts.reduce((a,p)=>a+p.chapters.length,0),"Chapters"],[topics.length,"Topics"],["18","Lenses per topic"]].map(([a,b])=>`<div class="stat"><strong>${a}</strong><span>${b}</span></div>`).join("");links.innerHTML=parts.map(p=>`<a href="#part-${p.no}"><span class="pno">P${p.no}</span><span>${esc(p.title)}</span></a>`).join("");overviewGrid.innerHTML=parts.map(p=>{const n=p.chapters.reduce((a,c)=>a+c.topics.length,0);return`<a class="card" href="#part-${p.no}"><span class="chip">Part ${p.no}</span><h3>${esc(p.title)}</h3><p>${esc(p.goal)}</p><div class="chips"><span class="chip">${p.chapters.length} chapters</span><span class="chip">${n} topics</span></div></a>`}).join("");partsEl.innerHTML=parts.map(part).join("");jump.innerHTML='<option value="">Jump to topic</option>'+topics.map(x=>`<option value="${x.id}">P${x.p.no} - ${esc(x.t)}</option>`).join("");revEl.innerHTML=rev.map(([a,b])=>`<div class="card"><h3>${esc(a)}</h3><p>${esc(b)}</p></div>`).join("")}
+const stats=document.getElementById("stats"),links=document.getElementById("links"),overviewGrid=document.getElementById("overviewGrid"),partsEl=document.getElementById("parts"),jump=document.getElementById("jump"),revEl=document.getElementById("rev"),searchEl=document.getElementById("search"),expandEl=document.getElementById("expand"),menuEl=document.getElementById("menu"),sideEl=document.getElementById("side"),progEl=document.getElementById("prog");
+render();
+searchEl.addEventListener("input",()=>{const q=searchEl.value.trim().toLowerCase();document.querySelectorAll("details.topic").forEach(d=>{const hit=!q||d.dataset.search.includes(q);d.classList.toggle("hidden",!hit);if(q&&hit)d.open=true});document.querySelectorAll(".chapter").forEach(c=>c.classList.toggle("hidden",!c.querySelector("details.topic:not(.hidden)")));document.querySelectorAll(".part").forEach(p=>p.classList.toggle("hidden",!p.querySelector(".chapter:not(.hidden)")))});
+jump.addEventListener("change",e=>{const el=document.getElementById(e.target.value);if(el){el.open=true;el.scrollIntoView({behavior:"smooth",block:"start"})}});
+expandEl.addEventListener("click",e=>{const open=e.target.textContent.includes("Expand");document.querySelectorAll("details.topic:not(.hidden)").forEach(d=>d.open=open);e.target.textContent=open?"Collapse all":"Expand all"});
+menuEl.addEventListener("click",()=>sideEl.classList.toggle("open"));sideEl.addEventListener("click",e=>{if(e.target.closest("a"))sideEl.classList.remove("open")});
+document.querySelectorAll("[data-copy]").forEach(b=>b.addEventListener("click",async()=>{try{await navigator.clipboard.writeText(b.dataset.copy);b.textContent="Copied";setTimeout(()=>b.textContent="Copy",900)}catch{b.textContent="Select"}}));
+addEventListener("scroll",()=>{const max=document.documentElement.scrollHeight-innerHeight;progEl.style.width=max?Math.min(100,scrollY/max*100)+"%":"0%"},{passive:true});
+let closed=[];addEventListener("beforeprint",()=>{closed=[...document.querySelectorAll("details.topic:not([open])")];document.querySelectorAll("details.topic").forEach(d=>d.open=true);document.querySelectorAll(".hidden").forEach(x=>x.classList.remove("hidden"))});addEventListener("afterprint",()=>closed.forEach(d=>d.open=false));
+  </script>
+</body>
+</html>
